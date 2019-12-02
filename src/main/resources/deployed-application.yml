@@ -1,2 +1,8 @@
+# This is the environment agnostic config file. It is used by setting the SPRING_CONFIG_NAME environment variable to
+# "deployed-application". By default the application.yml file will be used, which is convenient for local development.
+
+spring:
+  profiles:
+    active: "#{Octopus.Environment.Name}"
 server:
-  port : #{Port}
+  port : "#{Port}"
