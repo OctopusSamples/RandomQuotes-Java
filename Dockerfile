@@ -15,3 +15,4 @@ WORKDIR /app
 COPY --from=build-env /app/target/*.jar ./app.jar
 CMD ["/usr/bin/java", "-jar", "/app/app.jar"]
 EXPOSE 80
+ENV SPRING_CONFIG_NAME docker-application
