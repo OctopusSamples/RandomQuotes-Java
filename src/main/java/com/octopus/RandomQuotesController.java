@@ -2,10 +2,13 @@ package com.octopus;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -18,6 +21,9 @@ public class RandomQuotesController {
 
     @Value("${spring.profiles.active:unknown}")
     private String activeProfile;
+
+    @Autowired
+    private ServletContext context;
 
     @RequestMapping("/api/quote")
     public String index() throws IOException {
@@ -36,8 +42,9 @@ public class RandomQuotesController {
     private String getVersion() {
         try
         {
-            InputStream resourceAsStream =
-                    this.getClass().getResourceAsStream("/META-INF/maven/com.octopus/randomquotes/pom.properties");
+            final InputStream resourceAsStream = ObjectUtils.defaultIfNull(
+                    this.getClass().getResourceAsStream("/META-INF/maven/com.octopus/randomquotes/pom.properties"),
+                    context.getResourceAsStream("/META-INF/maven/com.octopus/randomquotes/pom.properties"));
             final Properties props = new Properties();
             props.load( resourceAsStream );
             return props.get("version").toString();
