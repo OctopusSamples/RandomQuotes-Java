@@ -77,4 +77,17 @@
         </profile>
     </profiles>
 
+    <distributionManagement>
+        <repository>
+            <id>central</id>
+            <name>Artifactory</name>
+            <url>http://localhost:8041/artifactory/Maven</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Artifactory-Snapshots</name>
+            <url>http://localhost:8041/artifactory/Maven</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
