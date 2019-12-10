@@ -81,12 +81,12 @@
         <repository>
             <id>artifactory</id>
             <name>Artifactory</name>
-            <url>http://localhost:8081/artifactory/Maven</url>
+            <url>http://localhost:8041/artifactory/Maven</url>
         </repository>
         <snapshotRepository>
             <id>artifactorysnapshots</id>
             <name>Artifactory-Snapshots</name>
-            <url>http://localhost:8081/artifactory/Maven</url>
+            <url>http://localhost:8041/artifactory/Maven</url>
         </snapshotRepository>
     </distributionManagement>
 
