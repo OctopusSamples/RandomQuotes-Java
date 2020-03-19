@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="randomquotes:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>randomquotes</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="${project.name}.0.1.0.war">
+      <element id="artifact" artifact-name="randomquotes:war exploded" />
+    </root>
+  </artifact>
+</component>
