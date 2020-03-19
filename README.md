@@ -10,3 +10,6 @@ mvn -Pwar "-Dgpg.keyname=gpgkeyname" "-Dgpg.passphrase=keypassword" deploy
 
 Note that you need to configure `~/.m2/settings.xml` with your Sonatype credentials. 
 See https://central.sonatype.org/pages/apache-maven.html for details.
+
+The WAR file has been published as `com.octopus:randomquotes`, and is available on
+[Maven central](https://repo1.maven.org/maven2/com/octopus/randomquotes/).
