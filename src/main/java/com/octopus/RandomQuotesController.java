@@ -1,7 +1,11 @@
 package com.octopus;
 
 import com.google.common.base.Charsets;
+import com.google.common.collect.ImmutableList;
 import com.google.common.io.Resources;
+import com.octopus.entity.Author;
+import com.octopus.repository.AuthorRepository;
+import com.octopus.repository.QuoteRepository;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.servlet.ServletContext;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.AuthProvider;
+import java.util.List;
 import java.util.Properties;
 import java.util.Random;
 
@@ -25,15 +31,18 @@ public class RandomQuotesController {
     @Autowired
     private ServletContext context;
 
+    @Autowired
+    private AuthorRepository authorRepository;
+
     @RequestMapping("/api/quote")
     public String index() throws IOException {
 
-        final String[] authors = Resources.toString(Resources.getResource("data/authors.txt"), Charsets.UTF_8).split(LINE_END_RE);
-        final String[] quotes = Resources.toString(Resources.getResource("data/quotes.txt"), Charsets.UTF_8).split(LINE_END_RE);
-        final int randomIndex = RANDOM.nextInt(authors.length);
+        final List<Author> authors = ImmutableList.copyOf(authorRepository.findAll());
 
-        return "{\"quote\": \"" + quotes[randomIndex] + "\", " +
-                "\"author\": \"" + authors[randomIndex] + "\", " +
+        final int randomIndex = RANDOM.nextInt(authors.size());
+
+        return "{\"quote\": \"" + authors.get(randomIndex).getQuotes().stream().findFirst().map(q -> q.getQuote()).orElse("No quote associated with author") + "\", " +
+                "\"author\": \"" + authors.get(randomIndex).getAuthor() + "\", " +
                 "\"appVersion\": \"" + getVersion() + "\", " +
                 "\"environmentName\": \"" + activeProfile + "\" " +
                 "}";
