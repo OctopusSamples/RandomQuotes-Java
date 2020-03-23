@@ -7,7 +7,7 @@ create table if not exists randomquotes.author
     id serial not null
         constraint author_pk
             primary key,
-    name text not null
+    author text not null
 );
 
 -- alter table author owner to postgres;
