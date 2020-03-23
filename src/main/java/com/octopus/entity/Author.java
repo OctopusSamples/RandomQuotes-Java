@@ -8,7 +8,7 @@ import java.util.List;
 public class Author {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+    private Integer id;
     private String author;
 
     @OneToMany(
@@ -22,12 +22,12 @@ public class Author {
 
     }
 
-    public Author(final Long id, final String author) {
+    public Author(final Integer id, final String author) {
         this.id = id;
         this.author = author;
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 

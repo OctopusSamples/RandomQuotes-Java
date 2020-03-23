@@ -2,13 +2,11 @@ server:
   port : 5555
 
 spring:
-  h2:
-    console:
-      enabled: true
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
-      default_schema: data
+      hibernate:
+        default_schema: randomquotes
   datasource:
     url: jdbc:postgresql://localhost:5432/postgres
     username: postgres

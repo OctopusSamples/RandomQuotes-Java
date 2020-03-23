@@ -6,7 +6,7 @@ import javax.persistence.*;
 public class Quote {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
-    private Long id;
+    private Integer id;
     private String quote;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -16,7 +16,7 @@ public class Quote {
 
     }
 
-    public Long getId() {
+    public Integer getId() {
         return id;
     }
 
