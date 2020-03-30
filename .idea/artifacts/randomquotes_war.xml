@@ -7,7 +7,7 @@
         <packaging>war</packaging>
       </options>
     </properties>
-    <root id="archive" name="${project.name}.0.1.5.war">
+    <root id="archive" name="${project.name}.0.1.6.war">
       <element id="artifact" artifact-name="randomquotes:war exploded" />
     </root>
   </artifact>

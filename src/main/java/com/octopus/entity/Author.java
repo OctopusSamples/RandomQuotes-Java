@@ -9,7 +9,10 @@ public class Author {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     private Integer id;
-    private String author;
+    @Column(name = "FIRSTNAME")
+    private String firstName;
+    @Column(name = "LASTNAME")
+    private String lastName;
 
     @OneToMany(
             mappedBy = "author",
@@ -22,20 +25,24 @@ public class Author {
 
     }
 
-    public Author(final Integer id, final String author) {
-        this.id = id;
-        this.author = author;
-    }
-
     public Integer getId() {
         return id;
     }
 
+    @Transient
     public String getAuthor() {
-        return author;
+        return firstName + " " + lastName;
     }
 
     public List<Quote> getQuotes() {
         return quotes;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 }
