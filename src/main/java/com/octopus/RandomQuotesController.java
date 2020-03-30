@@ -4,13 +4,14 @@ import com.google.common.collect.ImmutableList;
 import com.octopus.entity.Author;
 import com.octopus.repository.AuthorRepository;
 import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.ServletContext;
-import java.io.IOException;
+import javax.servlet.http.HttpSession;
 import java.io.InputStream;
 import java.util.List;
 import java.util.Properties;
@@ -30,7 +31,13 @@ public class RandomQuotesController {
     private AuthorRepository authorRepository;
 
     @RequestMapping("/api/quote")
-    public String index() {
+    public String index(final HttpSession httpSession) {
+
+        /*
+            A typical REST API should be stateless. Maintaining state makes deployments, scaling and HA far more difficult.
+            However we maintain some trivial state here exactly for the purposes of demonstrating these deployment challenges.
+         */
+        httpSession.setAttribute("quoteCount", ObjectUtils.defaultIfNull((Integer)httpSession.getAttribute("quoteCount"), 0) + 1);
 
         final List<Author> authors = ImmutableList.copyOf(authorRepository.findAll());
 
@@ -39,7 +46,8 @@ public class RandomQuotesController {
         return "{\"quote\": \"" + authors.get(randomIndex).getQuotes().stream().findFirst().map(q -> q.getQuote()).orElse("No quote associated with author") + "\", " +
                 "\"author\": \"" + authors.get(randomIndex).getAuthor() + "\", " +
                 "\"appVersion\": \"" + getVersion() + "\", " +
-                "\"environmentName\": \"" + activeProfile + "\" " +
+                "\"environmentName\": \"" + activeProfile + "\", " +
+                "\"quoteCount\": \"" + (Integer)httpSession.getAttribute("quoteCount") + "\" " +
                 "}";
     }
 

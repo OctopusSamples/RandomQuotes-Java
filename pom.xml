@@ -5,7 +5,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>randomquotes</artifactId>
-    <version>0.1.4</version>
+    <version>0.1.5</version>
     <packaging>${packaging.type}</packaging>
 
     <parent>

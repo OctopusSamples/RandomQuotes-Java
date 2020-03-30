@@ -7,6 +7,7 @@ $(function(){
             $("#quoteAuthor").text(quote.author);
             $("#appVersion").text(quote.appVersion);
             $("#environmentName").text(quote.environmentName);
+            $("#quoteCount").text(quote.quoteCount);
         });
     }
 
