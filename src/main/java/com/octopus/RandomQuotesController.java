@@ -36,6 +36,8 @@ public class RandomQuotesController {
         /*
             A typical REST API should be stateless. Maintaining state makes deployments, scaling and HA far more difficult.
             However we maintain some trivial state here exactly for the purposes of demonstrating these deployment challenges.
+            Also note this code may lead to race conditions, as modifications to the session state should be synchronized
+            across threads.
          */
         httpSession.setAttribute("quoteCount", ObjectUtils.defaultIfNull((Integer)httpSession.getAttribute("quoteCount"), 0) + 1);
 
