@@ -1,4 +1,4 @@
-FROM maven:3.3-jdk-8 AS build-env
+FROM 3.6-jdk-11-openj9 AS build-env
 WORKDIR /app
 
 # Copy pom and get dependencies as seperate layers
