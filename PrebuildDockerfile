@@ -1,0 +1,13 @@
+# This docker image contains most of the dependencies required to build the Java sample app. Preloading the
+# dependencies saves some time.
+# docker build -t octopusdeploy/randomquotesjavabuild --file C:\Code\RandomQuotes-Java\PrebuildDockerfile .
+
+FROM maven:3.6.3-jdk-8 AS build-env
+
+# Copy pom and prepopulate dependencies to make future builds faster
+COPY pom.xml /tmp
+# We expect mvn package -DskipTests to return an error code, but that is ok.
+RUN cd /tmp; mvn dependency:resolve; mvn clean package -DskipTests; ls /tmp
+RUN rm -rf /tmp/*
+
+ENTRYPOINT ["/usr/local/bin/mvn-entrypoint.sh"]
