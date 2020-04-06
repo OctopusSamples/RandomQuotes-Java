@@ -201,7 +201,7 @@
         <repository>
             <id>central maven repo</id>
             <name>central maven repo https</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
         </repository>
     </repositories>
 
@@ -209,7 +209,7 @@
         <pluginRepository>
             <id>central maven repo</id>
             <name>central maven repo https</name>
-            <url>https://repo.maven.apache.org/maven2</url>
+            <url>https://repo1.maven.org/maven2</url>
         </pluginRepository>
     </pluginRepositories>
 
