@@ -17,5 +17,4 @@ COPY --from=build-env /app/target/*.jar ./app.jar
 # Use an external config file
 COPY src/main/resources/docker-application.yml /app/docker-application.yml
 # The environment variable used by spring to reference the external file
-ENV SPRING_CONFIG_LOCATION /app/docker-application.yml
-CMD ["/usr/bin/java", "-jar", "/app/app.jar"]
+CMD ["/usr/bin/java", "-jar", "/app/app.jar", "--spring.config.location=file:///app/docker-application.yml"]
