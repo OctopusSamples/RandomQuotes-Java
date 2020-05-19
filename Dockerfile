@@ -13,7 +13,7 @@ RUN mvn package
 FROM openjdk:8-jre-alpine
 EXPOSE 80
 WORKDIR /app
-COPY --from=build-env /app/target/*.jar ./app.jar
+COPY --from=build-env /app/target/randomquotes.0.1.7.jar ./app.jar
 # Use an external config file
 COPY src/main/resources/docker-application.yml /app/docker-application.yml
 # The environment variable used by spring to reference the external file
