@@ -6,8 +6,8 @@ pipeline {
         string(defaultValue: 'ServerId', description: '', name: 'Master', trim: true)
     }
     tools {
-        maven 'Maven 3.6.3'
-        jdk 'Java 9'
+        maven 'Maven 3'
+        jdk 'Java'
     }
     agent any
     stages {
