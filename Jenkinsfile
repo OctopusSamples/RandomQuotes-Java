@@ -3,7 +3,7 @@ pipeline {
         string(defaultValue: 'Spaces-1', description: '', name: 'SpaceId', trim: true)
         string(defaultValue: 'RandomQuotes', description: '', name: 'ProjectName', trim: true)
         string(defaultValue: 'Dev', description: '', name: 'EnvironmentName', trim: true)
-        string(defaultValue: 'ServerId', description: '', name: 'Master', trim: true)
+        string(defaultValue: 'Master', description: '', name: 'ServerId', trim: true)
     }
     tools {
         maven 'Maven 3'
