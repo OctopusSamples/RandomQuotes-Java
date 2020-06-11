@@ -19,6 +19,14 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/OctopusSamples/RandomQuotes-Java.git'
             }
         }
+        stage ('Initialize') {
+            steps {
+                sh '''
+                    echo "PATH = ${PATH}"
+                    echo "M2_HOME = ${M2_HOME}"
+                '''
+            }
+        }
         stage('build') {
             steps {
                 sh(script: "mvn versions:set -DnewVersion=1.0.${BUILD_NUMBER}", returnStdout: true)
