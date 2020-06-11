@@ -9,6 +9,9 @@ pipeline {
         maven 'Maven 3'
         jdk 'Java'
     }
+    environment {
+        JAVA_HOME = "${tool('Java')}"
+    }
     agent any
     stages {
         stage('Checkout git repo') {
