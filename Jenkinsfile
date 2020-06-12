@@ -9,9 +9,6 @@ pipeline {
         maven 'Maven 3'
         jdk 'Java'
     }
-    environment {
-        JAVA_HOME = "${tool('Java')}"
-    }
     agent any
     stages {
         stage('Checkout git repo') {
@@ -19,6 +16,11 @@ pipeline {
                 git branch: 'master', url: 'https://github.com/OctopusSamples/RandomQuotes-Java.git'
             }
         }
+        // The OctoCLI tool has been defined as with the Custom Tools plugin: https://plugins.jenkins.io/custom-tools-plugin/
+        // This plugin will extract a .tar.gz file (for example https://download.octopusdeploy.com/octopus-tools/7.3.7/OctopusTools.7.3.7.linux-x64.tar.gz)
+        // to a directory like /var/jenkins_home/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OctoCLI/Octo.
+        // This directory is then specified as the default location of the Octo CLI in Jenkins under
+        // Manage Jenkins -> Global Tools Configuration -> Octopus Deploy CLI.
         stage ('Initialize') {
             steps {
                 sh """
