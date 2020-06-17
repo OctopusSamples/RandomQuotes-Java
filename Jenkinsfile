@@ -23,12 +23,7 @@ pipeline {
         // Manage Jenkins -> Global Tools Configuration -> Octopus Deploy CLI.
         stage ('Initialize') {
             steps {
-                sh """
-                    echo "PATH = ${PATH}"
-                    echo "M2_HOME = ${M2_HOME}"
-                    echo "JAVA_HOME = ${JAVA_HOME}"
-                    echo "OctoCLI = ${tool('OctoCLI')}"
-                """
+                sh 'printenv'
             }
         }
         stage('build') {
@@ -38,8 +33,7 @@ pipeline {
             }
         }
         stage('deploy') {
-            steps {
-                sh 'printenv'
+            steps {                
                 //octopusPack additionalArgs: '', includePaths: "${env.WORKSPACE}/target/randomquotes.1.0.${BUILD_NUMBER}.jar", outputPath: "${env.WORKSPACE}", overwriteExisting: false, packageFormat: 'zip', packageId: 'randomquotes', packageVersion: "1.0.${BUILD_NUMBER}", sourcePath: '', toolId: 'Default', verboseLogging: false
                 octopusPushPackage additionalArgs: '', overwriteMode: 'FailIfExists', packagePaths: "${env.WORKSPACE}/target/randomquotes.1.0.${BUILD_NUMBER}.jar", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', verboseLogging: false
                 //octopusPushBuildInformation additionalArgs: '', commentParser: 'GitHub', overwriteMode: 'FailIfExists', packageId: 'randomquotes', packageVersion: "1.0.${BUILD_NUMBER}", serverId: "${ServerId}", spaceId: "${SpaceId}", toolId: 'Default', verboseLogging: false
