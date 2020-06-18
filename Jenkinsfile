@@ -24,7 +24,7 @@ pipeline {
         stage ('Initialize') {
             steps {
                 sh 'printenv'
-                sh "OctoCLI: $tool('OctoCLI')"
+                sh "OctoCLI: ${tool('Octo CLI')}"
             }
         }
         stage('build') {
