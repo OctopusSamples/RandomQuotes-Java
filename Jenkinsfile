@@ -11,11 +11,11 @@ pipeline {
     }
     agent any
     stages {
-        stage('Checkout git repo') {
+        /*stage('Checkout git repo') {
             steps {
                 git branch: 'master', url: 'https://github.com/OctopusSamples/RandomQuotes-Java.git'
             }
-        }
+        }*/
         // The OctoCLI tool has been defined with the Custom Tools plugin: https://plugins.jenkins.io/custom-tools-plugin/
         // This plugin will extract a .tar.gz file (for example https://download.octopusdeploy.com/octopus-tools/7.3.7/OctopusTools.7.3.7.linux-x64.tar.gz)
         // to a directory like /var/jenkins_home/tools/com.cloudbees.jenkins.plugins.customtools.CustomTool/OctoCLI/Octo.
