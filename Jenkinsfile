@@ -7,7 +7,8 @@ pipeline {
         string(defaultValue: 'RandomQuotes', description: '', name: 'ProjectName', trim: true)
         // The environment we will be deploying to.
         string(defaultValue: 'Dev', description: '', name: 'EnvironmentName', trim: true)
-        // The name of the Octopus instance in Jenkins that we will be working with.
+        // The name of the Octopus instance in Jenkins that we will be working with. This is set in:
+        // Manage Jenkins -> Configure System -> Octopus Deploy Plugin
         string(defaultValue: 'Octopus', description: '', name: 'ServerId', trim: true)
     }
     /*
