@@ -7,7 +7,7 @@ RUN mvn dependency:resolve
 
 # Copy everything else and build
 COPY . ./
-RUN mvn package
+RUN mvn clean package
 RUN ls -la /app/target
 
 # Build runtime image
