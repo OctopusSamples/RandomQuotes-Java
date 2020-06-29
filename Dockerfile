@@ -8,6 +8,7 @@ RUN mvn dependency:resolve
 # Copy everything else and build
 COPY . ./
 RUN mvn package
+RUN ls -la /app/target
 
 # Build runtime image
 FROM openjdk:8-jre-alpine
