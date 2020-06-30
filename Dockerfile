@@ -7,13 +7,13 @@ RUN mvn dependency:resolve
 
 # Copy everything else and build
 COPY . ./
-RUN mvn package
+RUN mvn package -DfinalName=app
 
 # Build runtime image
 FROM openjdk:8-jre-alpine
 EXPOSE 80
 WORKDIR /app
-COPY --from=build-env /app/target/randomquotes.0.1.7.jar ./app.jar
+COPY --from=build-env /app/target/app.jar ./app.jar
 # Use an external config file
 COPY src/main/resources/docker-application.yml /app/docker-application.yml
 # The environment variable used by spring to reference the external file
