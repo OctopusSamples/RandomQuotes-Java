@@ -1,6 +1,7 @@
 A sample Java application to display famous quotes. 
 #Issue 1
 #Issue 2
+#Issue 3
 Run `mvn package` to create JAR, and `mvn package -Pwar` to create WAR.
 
 ## Configuration Files
