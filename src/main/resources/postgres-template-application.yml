@@ -11,7 +11,7 @@ spring:
         default_schema: randomquotes
   datasource:
     url: jdbc:postgresql://#{DatabaseServer}:5432/postgres
-    username: "#{DatabaseUsername}"
-    password: "#{DatabasePassword}"
+    username: '#{DatabaseUsername | YamlSingleQuoteEscape}'
+    password: "#{DatabasePassword | YamlDoubleQuoteEscape}"
   flyway:
     locations: classpath:db/migration/{vendor}
