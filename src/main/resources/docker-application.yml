@@ -3,7 +3,7 @@
 
 spring:
   profiles:
-    active: "Docker"
+    active: Docker
   h2:
     console:
       enabled: true

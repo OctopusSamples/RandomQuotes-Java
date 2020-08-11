@@ -2,6 +2,8 @@ server:
   port : 5555
 
 spring:
+  profiles:
+    active: Dev
   jpa:
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     properties:
