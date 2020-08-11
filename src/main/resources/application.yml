@@ -1,7 +1,13 @@
+# The configuration defines the settings used in a local development environment
+# to give developers the ability to clone, develop and build without any
+# additional configuration.
+
 server:
   port : 5555
 
 spring:
+  profiles:
+    active: local
   h2:
     console:
       enabled: true
