@@ -14,4 +14,4 @@ spring:
     username: postgres
     password: docker
   flyway:
-    locations: classpath:db/migration/{vendor}
+    locations: classpath:db/migration/{vendor}we
