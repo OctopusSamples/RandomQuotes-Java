@@ -1,3 +1,4 @@
 <jboss-web>
+    <!-- The context root defines the path that the application is available on in Wildfly and EAP -->
     <context-root>randomquotes</context-root>
 </jboss-web>
