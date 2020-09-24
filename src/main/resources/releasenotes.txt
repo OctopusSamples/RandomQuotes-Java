@@ -1,0 +1,7 @@
+## Release #{Octopus.Release.Number}
+#{each package in Octopus.Release.Package}
+This release contains #{package.PackageId} #{package.Version}
+#{each commit in package.Commits}
+- #{commit.CommitId} - #{commit.Comment}
+#{/each}
+#{/each}
