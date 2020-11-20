@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <jboss-web>
     <!-- The context root defines the path that the application is available on in Wildfly and EAP -->
-    <context-root><![CDATA[randomquotes]]></context-root>
+    <!-- <context-root>randomquotes</context-root> -->
 </jboss-web>
