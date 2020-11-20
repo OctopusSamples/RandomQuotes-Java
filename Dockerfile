@@ -1,4 +1,4 @@
-FROM octopusdeploy/randomquotesjavabuild AS build-env
+FROM maven:3.6.3-jdk-8 AS build-env
 WORKDIR /app
 
 # Copy pom and get dependencies as seperate layers
