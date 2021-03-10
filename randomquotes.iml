@@ -29,6 +29,7 @@
         <setting name="provider-name" value="Hibernate" />
         <datasource-mapping>
           <factory-entry name="entityManagerFactory" />
+          <factory-entry name="randomquotes" />
         </datasource-mapping>
         <naming-strategy-map />
       </configuration>
