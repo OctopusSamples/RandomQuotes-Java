@@ -10,8 +10,8 @@ spring:
       hibernate:
         default_schema: randomquotes
   datasource:
-    url: jdbc:postgresql://localhost:5432/postgres
-    username: postgres
-    password: docker
+    url: ${POSTGRES_URL:jdbc:postgresql://localhost:5432/postgres}
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASS:docker}
   flyway:
     locations: classpath:db/migration/{vendor}
