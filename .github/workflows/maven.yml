@@ -18,7 +18,7 @@ jobs:
     - name: install Octopus Deploy CLI
       uses: OctopusDeploy/install-octocli@v1
       with:
-        version: 7.4.2
+        version: 7.4.3124
 
     - name: Update version
       run: mvn versions:set -DnewVersion=0.1.${{ github.run_number }}
@@ -55,7 +55,12 @@ jobs:
       run: mv target/app.jar target/app.0.1.${{ github.run_number }}.jar
 
     - name: Push Package
-      run: octo push --space=${{ secrets.OCTOPUS_SERVER_SPACE}} --server=${{ secrets.OCTOPUS_SERVER_URL }} --apiKey=${{ secrets.OCTOPUS_API_KEY }} --package target/app.0.1.${{ github.run_number }}.jar
+      run: |
+        octo push
+        --space=${{ secrets.OCTOPUS_SERVER_SPACE}}
+        --server=${{ secrets.OCTOPUS_SERVER_URL }}
+        --apiKey=${{ secrets.OCTOPUS_API_KEY }}
+        --package target/app.0.1.${{ github.run_number }}.jar
 
     - name: Generate Octopus Deploy build information
       uses: xo-energy/action-octopus-build-information@v1.1.2
