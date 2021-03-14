@@ -58,7 +58,7 @@ jobs:
       run: octo push --space=${{ secrets.OCTOPUS_SERVER_SPACE}} --server=${{ secrets.OCTOPUS_SERVER_URL }} --apiKey=${{ secrets.OCTOPUS_API_KEY }} --package target/app.0.1.${{ github.run_number }}.jar
 
     - name: Generate Octopus Deploy build information
-      uses: xo-energy/action-octopus-build-information@v1.0.0
+      uses: xo-energy/action-octopus-build-information@v1.1.2
       with:
         octopus_api_key: ${{ secrets.OCTOPUS_API_KEY }}
         octopus_server: ${{ secrets.OCTOPUS_SERVER_URL }}
