@@ -15,7 +15,7 @@ jobs:
       with:
         java-version: 1.8
 
-    - name: install Octopus Deploy CLI
+    - name: Install Octopus Deploy CLI
       uses: OctopusDeploy/install-octocli@v1
       with:
         version: 7.4.3124
@@ -55,7 +55,7 @@ jobs:
       run: mv target/app.jar target/app.0.1.${{ github.run_number }}.jar
 
     - name: Push Package
-      run: |
+      run: >
         octo push
         --space=${{ secrets.OCTOPUS_SERVER_SPACE}}
         --server=${{ secrets.OCTOPUS_SERVER_URL }}
