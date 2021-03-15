@@ -68,11 +68,13 @@ jobs:
         \"PackageId\": \"app\",
         \"Version\": \"0.1.${{ github.run_number }}\",
         \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
+        \"BuildNumber\": \"${{ github.run_number }}\",
+        \"Branch\": \"${{ github.head_ref }}\",
         \"OctopusBuildInformation\": {
         \"BuildEnvironment\":\"GithubActions\",
         \"VcsCommitNumber\":\"${{ github.ref }}\",
         \"VcsType\": \"Git\",
-        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\"}}" > buildinfo.json; echo buildinfo.json
+        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\"}}" > buildinfo.json; cat buildinfo.json
 
     - name: Push Build Info Package
       run: >
