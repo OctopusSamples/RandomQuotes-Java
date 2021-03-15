@@ -75,7 +75,10 @@ jobs:
         \"VcsCommitNumber\":\"${{ github.sha }}\",
         \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
         \"VcsType\": \"Git\",
-        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\"}}" > buildinfo.json; cat buildinfo.json
+        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\""
+        \"Commits\" {
+          [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
+        }}}" > buildinfo.json; cat buildinfo.json
 
     - name: Push Build Info Package
       run: >
