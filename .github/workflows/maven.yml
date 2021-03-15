@@ -72,7 +72,8 @@ jobs:
         \"Branch\": \"${{ github.head_ref }}\",
         \"OctopusBuildInformation\": {
         \"BuildEnvironment\":\"GithubActions\",
-        \"VcsCommitNumber\":\"${{ github.ref }}\",
+        \"VcsCommitNumber\":\"${{ github.sha }}\",
+        \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
         \"VcsType\": \"Git\",
         \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\"}}" > buildinfo.json; cat buildinfo.json
 
