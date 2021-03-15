@@ -7,12 +7,13 @@ RUN mvn dependency:resolve
 RUN mvn dependency:tree
 
 # Copy everything else and build
+ENV VERSION=0.0.1
+
 COPY . ./
-RUN mvn package -DfinalName=app
 
 # Update the package version
-ENV VERSION=0.0.1
 RUN mvn versions:set -DnewVersion=${VERSION}
+RUN mvn package -DfinalName=app
 
 # Build runtime image
 FROM openjdk:8-jre-alpine
