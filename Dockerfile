@@ -1,4 +1,4 @@
-ENV VERSION=0.0.1
+ARG VERSION=0.0.1
 
 FROM maven:3.6.3-jdk-8 AS build-env
 WORKDIR /app
@@ -12,7 +12,7 @@ RUN mvn dependency:tree
 COPY . ./
 
 # Update the package version
-RUN mvn versions:set -DnewVersion=${VERSION}
+RUN mvn versions:set -DnewVersion=VERSION
 
 # Now build
 RUN mvn package -DfinalName=app
