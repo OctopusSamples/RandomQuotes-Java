@@ -73,7 +73,6 @@ jobs:
         \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
         \"BuildNumber\": \"${{ github.run_number }}\",
         \"Branch\": \"${{ github.ref }}\",
-        \"OctopusBuildInformation\": {
         \"BuildEnvironment\":\"GithubActions\",
         \"VcsCommitNumber\":\"${{ github.sha }}\",
         \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
@@ -81,7 +80,7 @@ jobs:
         \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\",
         \"Commits\":
         [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
-        }}" > dockerbuildinfo.json; cat dockerbuildinfo.json
+        }" > dockerbuildinfo.json; cat dockerbuildinfo.json
 
     - name: Push Build Info Package
       run: >-
