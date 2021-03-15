@@ -6,6 +6,10 @@ COPY pom.xml ./
 RUN mvn dependency:resolve
 RUN mvn dependency:tree
 
+# Update the package version
+ENV VERSION=0.0.1
+RUN mvn versions:set -DnewVersion=${VERSION}
+
 # Copy everything else and build
 COPY . ./
 RUN mvn package -DfinalName=app
