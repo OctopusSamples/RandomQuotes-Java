@@ -12,7 +12,7 @@ RUN mvn dependency:tree
 COPY . ./
 
 # Update the package version
-RUN mvn versions:set -DnewVersion=VERSION
+RUN mvn versions:set -DnewVersion=$VERSION
 
 # Now build
 RUN mvn package -DfinalName=app
