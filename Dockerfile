@@ -1,3 +1,5 @@
+ENV VERSION=0.0.1
+
 FROM maven:3.6.3-jdk-8 AS build-env
 WORKDIR /app
 
@@ -6,13 +8,13 @@ COPY pom.xml ./
 RUN mvn dependency:resolve
 RUN mvn dependency:tree
 
-# Copy everything else and build
-ENV VERSION=0.0.1
-
+# Copy everything else
 COPY . ./
 
 # Update the package version
 RUN mvn versions:set -DnewVersion=${VERSION}
+
+# Now build
 RUN mvn package -DfinalName=app
 
 # Build runtime image
