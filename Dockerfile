@@ -4,6 +4,7 @@ WORKDIR /app
 # Copy pom and get dependencies as seperate layers
 COPY pom.xml ./
 RUN mvn dependency:resolve
+RUN mvn dependency:tree
 
 # Copy everything else and build
 COPY . ./
