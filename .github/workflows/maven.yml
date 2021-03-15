@@ -109,4 +109,14 @@ jobs:
         \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\",
         \"Commits\":
         [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
-        }}" > buildinfo.json; cat buildinfo.json
+        }}" > dockerbuildinfo.json; cat dockerbuildinfo.json
+
+    - name: Push Build Info Package
+      run: >-
+        octo build-information
+        --space=${{ secrets.OCTOPUS_SERVER_SPACE}}
+        --server=${{ secrets.OCTOPUS_SERVER_URL }}
+        --apiKey=${{ secrets.OCTOPUS_API_KEY }}
+        --package-id=ctopussamples/randomquotesjava
+        --version=0.1.${{ github.run_number }}
+        --file=dockerbuildinfo.json
