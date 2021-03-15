@@ -62,12 +62,24 @@ jobs:
         --apiKey=${{ secrets.OCTOPUS_API_KEY }}
         --package target/app.0.1.${{ github.run_number }}.jar
 
-    - name: Generate Octopus Deploy build information
-      uses: xo-energy/action-octopus-build-information@v1.1.2
-      with:
-        octopus_api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        octopus_server: ${{ secrets.OCTOPUS_SERVER_URL }}
-        octopus_space: ${{ secrets.OCTOPUS_SERVER_SPACE}}
-        output_path: octopus
-        push_package_ids: app
-        push_version: ${{ github.ref }}
+    - name: Build Package Info
+      run: >-
+        echo "{
+        \"PackageId\": \"app\",
+        \"Version\": \"0.1.${{ github.run_number }}\",
+        \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
+        \"OctopusBuildInformation\": {
+        \"BuildEnvironment\":\"GithubActions\",
+        \"VcsCommitNumber\":\"${{ github.ref }}\",
+        \"VcsType\": \"Git\",
+        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\"}}" > buildinfo.json; echo buildinfo.json
+
+    - name: Push Build Info Package
+      run: >
+        octo build-information
+        --space=${{ secrets.OCTOPUS_SERVER_SPACE}}
+        --server=${{ secrets.OCTOPUS_SERVER_URL }}
+        --apiKey=${{ secrets.OCTOPUS_API_KEY }}
+        --package-id=app
+        --version=0.1.${{ github.run_number }}
+        --file=buildinfo.json
