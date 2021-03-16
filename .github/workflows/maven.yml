@@ -75,7 +75,7 @@ jobs:
         \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
         \"BuildNumber\": \"${{ github.run_number }}\",
         \"Branch\": \"${{ github.ref }}\",
-        \"BuildEnvironment\":\"Github\",
+        \"BuildEnvironment\":\"GitHub\",
         \"VcsCommitNumber\":\"${{ github.sha }}\",
         \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
         \"VcsType\": \"Git\",
