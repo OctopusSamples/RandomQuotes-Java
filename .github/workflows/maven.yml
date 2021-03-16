@@ -81,10 +81,12 @@ jobs:
         \"VcsType\": \"Git\",
         \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\",
         \"Commits\":
-        [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
+        [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}],
+        \"WorkItems\":
+        [{\"Id"\: \"2\", \"LinkUrl\": \"https://github.com/OctopusSamples/RandomQuotes-Java/issues/2\", \"Source\": \"GitHub\", \"Description\": \"Add workitems to the github workflow build info JSON file\"}]
         }" > dockerbuildinfo.json; cat dockerbuildinfo.json
 
-    - name: Push Build Info Package
+    - name: Push Build Info
       run: >-
         octo build-information
         --space=${{ secrets.OCTOPUS_SERVER_SPACE}}
