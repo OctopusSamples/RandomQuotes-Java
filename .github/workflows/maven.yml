@@ -104,8 +104,8 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         push: true
-        build-args: VERSION=0.1.${{ github.run_number }}-${BRANCH_NAME}
-        tags: octopussamples/randomquotesjava:0.1.${{ github.run_number }}-${BRANCH_NAME}
+        build-args: VERSION=0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
+        tags: octopussamples/randomquotesjava:0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
 
     - name: Branch build Docker build info
       if: github.ref != 'refs/heads/master'
