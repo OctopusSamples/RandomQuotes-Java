@@ -28,7 +28,7 @@ jobs:
       run: mvn versions:set -DnewVersion=0.1.${{ github.run_number }}
 
     - name: List dependencies
-      run: mvn dependency:tree
+      run: mvn dependency:tree -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 
     - name: Build with Maven
       run: mvn -B package --file pom.xml -DfinalName=app
