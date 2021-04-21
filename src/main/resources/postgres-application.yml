@@ -1,5 +1,5 @@
 server:
-  port : 5555
+  port : ${PORT:5555}
 
 spring:
   profiles:

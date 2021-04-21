@@ -24,3 +24,30 @@ See [these instructions](https://central.sonatype.org/pages/apache-maven.html) f
 
 The WAR file has been published as `com.octopus:randomquotes`, and is available on
 [Maven central](https://repo1.maven.org/maven2/com/octopus/randomquotes/).
+
+## Deploying to Google App Engine
+
+The following `app.yaml` file can be saved in a directory also containing a copy of the uberjar jar file:
+
+```
+runtime: java
+env: flex
+
+handlers:
+- url: /.*
+  script: this field is required, but ignored
+  
+manual_scaling:
+  instances: 1
+  
+resources:
+  cpu: 1
+  memory_gb: 2
+  disk_size_gb: 10
+```
+
+It is then deployed with:
+
+```
+gcloud app deploy
+```
