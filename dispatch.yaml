@@ -1,0 +1,9 @@
+dispatch:
+  - url: "*/"
+    service: default
+
+  - url: "*/blueheader"
+    service: blueheader
+
+  - url: "*/blueheader/*"
+    service: blueheader
