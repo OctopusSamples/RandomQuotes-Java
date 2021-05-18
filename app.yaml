@@ -2,8 +2,11 @@
 # gcloud app deploy .\target\randomquotes.0.1.9.jar --appyaml .\app.yaml
 
 runtime: java11
-service: default
+service: blueheader
 instance_class: F2
+
+env_variables:
+  SERVER_SERVLET_CONTEXT_PATH: "/blueheader"
 
 health_check:
   enable_health_check: False
