@@ -1,0 +1,13 @@
+# Deploy with:
+# gcloud app deploy .\target\randomquotes.0.1.9.jar --appyaml .\app.yaml
+
+runtime: java11
+service: default
+instance_class: F2
+
+health_check:
+  enable_health_check: False
+  check_interval_sec: 60
+  timeout_sec: 4
+  unhealthy_threshold: 2
+  healthy_threshold: 2
