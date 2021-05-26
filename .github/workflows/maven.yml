@@ -52,7 +52,7 @@ jobs:
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
         asset_path: target/app.jar
-        asset_name: app.jar
+        asset_name: app.0.1.${{ github.run_number }}.jar
         asset_content_type: application/zip
 
     - name: Login to DockerHub
