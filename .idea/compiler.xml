@@ -12,6 +12,7 @@
     <bytecodeTargetLevel>
       <module name="gs-spring-boot" target="1.8" />
       <module name="randomquotes" target="1.8" />
+      <module name="wrapper" target="1.5" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
