@@ -111,13 +111,13 @@ jobs:
     - name: Main push to Maven
       if: github.ref == 'refs/heads/master'
       run: >-
-        mvn --batch-mode deploy:deploy-file \
-        -DgroupId=com.octopus \
-        -DartifactId=randomquotes \
-        -Dversion=0.1.${{ github.run_number }} \
-        -Dpackaging=jar \
-        -Dfile=target/app.jar \
-        -DrepositoryId=github \
+        mvn --batch-mode deploy:deploy-file
+        -DgroupId=com.octopus
+        -DartifactId=randomquotes
+        -Dversion=0.1.${{ github.run_number }}
+        -Dpackaging=jar
+        -Dfile=target/app.jar
+        -DrepositoryId=github
         -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -125,13 +125,13 @@ jobs:
     - name: Branch push to Maven
       if: github.ref != 'refs/heads/master'
       run: >-
-        mvn --batch-mode deploy:deploy-file \
-        -DgroupId=com.octopus \
-        -DartifactId=randomquotes \
-        -Dversion=0.1.${{ github.run_number }}-${BRANCH_NAME} \
-        -Dpackaging=jar \
-        -Dfile=target/app.jar \
-        -DrepositoryId=github \
+        mvn --batch-mode deploy:deploy-file
+        -DgroupId=com.octopus
+        -DartifactId=randomquotes
+        -Dversion=0.1.${{ github.run_number }}-${BRANCH_NAME}
+        -Dpackaging=jar
+        -Dfile=target/app.jar
+        -DrepositoryId=github
         -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
