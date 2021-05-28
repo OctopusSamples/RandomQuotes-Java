@@ -107,6 +107,34 @@ jobs:
         build-args: VERSION=0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
         tags: octopussamples/randomquotesjava:0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
 
+    - name: Main push to Maven
+      if: github.ref == 'refs/heads/master'
+      run: >-
+        mvn deploy:deploy-file \
+        -DgroupId=com.octopus \
+        -DartifactId=randomquotes \
+        -Dversion=0.1.${{ github.run_number }} \
+        -Dpackaging=jar \
+        -Dfile=target/app.jar \
+        -DrepositoryId=github \
+        -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Branch push to Maven
+      if: github.ref != 'refs/heads/master'
+      run: >-
+        mvn deploy:deploy-file \
+        -DgroupId=com.octopus \
+        -DartifactId=randomquotes \
+        -Dversion=0.1.${{ github.run_number }}-${BRANCH_NAME} \
+        -Dpackaging=jar \
+        -Dfile=target/app.jar \
+        -DrepositoryId=github \
+        -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Branch build Docker build info
       if: github.ref != 'refs/heads/master'
       run: >-
