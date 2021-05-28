@@ -12,7 +12,7 @@ RUN mvn --batch-mode dependency:tree --no-transfer-progress
 COPY . ./
 
 # Update the package version
-RUN mvn --batch-mode versions:set -DnewVersion=$VERSION
+RUN mvn versions:set -DnewVersion=$VERSION
 
 # Now build
 RUN mvn --batch-mode package -DfinalName=app

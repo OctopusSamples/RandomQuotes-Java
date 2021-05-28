@@ -26,7 +26,7 @@ jobs:
         version: 7.4.3124
 
     - name: Update version
-      run: mvn --batch-mode versions:set -DnewVersion=0.1.${{ github.run_number }}
+      run: mvn versions:set -DnewVersion=0.1.${{ github.run_number }}
 
     - name: List dependencies
       run: mvn --batch-mode dependency:tree --no-transfer-progress
