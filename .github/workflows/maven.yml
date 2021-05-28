@@ -110,7 +110,7 @@ jobs:
     - name: Main push to Maven
       if: github.ref == 'refs/heads/master'
       run: >-
-        mvn deploy:deploy-file \
+        mvn --batch-mode deploy:deploy-file \
         -DgroupId=com.octopus \
         -DartifactId=randomquotes \
         -Dversion=0.1.${{ github.run_number }} \
@@ -124,7 +124,7 @@ jobs:
     - name: Branch push to Maven
       if: github.ref != 'refs/heads/master'
       run: >-
-        mvn deploy:deploy-file \
+        mvn --batch-mode deploy:deploy-file \
         -DgroupId=com.octopus \
         -DartifactId=randomquotes \
         -Dversion=0.1.${{ github.run_number }}-${BRANCH_NAME} \
