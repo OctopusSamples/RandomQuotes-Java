@@ -3,7 +3,7 @@ A sample Java application to display famous quotes.
 #Issue 2
 #Issue 3
 #Issue 4
-#Issue 5 FIXED   asdasd
+#Issue 5 FIXED   asdasdas
 
 Run `mvn package` to create JAR, and `mvn package -Pwar` to create WAR.
 #add branch. Issue 5 fixed?
