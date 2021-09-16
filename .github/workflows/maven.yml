@@ -32,7 +32,7 @@ jobs:
       run: mvn --batch-mode dependency:tree --no-transfer-progress
 
     - name: Build with Maven
-      run: mvn --batch-mode  -B package --file pom.xml -DfinalName=app
+      run: mvn --batch-mode package --file pom.xml -DfinalName=app
 
     - name: Create Release
       id: create_release
