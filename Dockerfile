@@ -5,8 +5,8 @@ WORKDIR /app
 
 # Copy pom and get dependencies as seperate layers
 COPY pom.xml ./
-RUN mvn dependency:resolve
-RUN mvn dependency:tree --no-transfer-progress
+RUN mvn --batch-mode dependency:resolve
+RUN mvn --batch-mode dependency:tree --no-transfer-progress
 
 # Copy everything else
 COPY . ./
@@ -15,7 +15,7 @@ COPY . ./
 RUN mvn versions:set -DnewVersion=$VERSION
 
 # Now build
-RUN mvn package -DfinalName=app
+RUN mvn --batch-mode package -DfinalName=app
 
 # Build runtime image
 FROM openjdk:8-jre-alpine
