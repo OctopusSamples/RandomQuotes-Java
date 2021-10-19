@@ -30,6 +30,7 @@ public class RandomQuotesControllerTest {
 
     @Test
     public void ensureAuthorsExists() {
-        assertTrue(authorRepository.count() != 0);
+        // this test has been written to fail
+        assertTrue(authorRepository.count() == 0);
     }
 }
