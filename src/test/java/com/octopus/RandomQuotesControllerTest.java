@@ -32,4 +32,9 @@ public class RandomQuotesControllerTest {
     public void ensureAuthorsExists() {
         assertTrue(authorRepository.count() != 0);
     }
+
+    @Test
+    public void failThisTest() throws Exception {
+        throw new Exception("always fail");
+    }
 }
