@@ -28,11 +28,11 @@ pipeline {
             This directory is then specified as the default location of the Octo CLI in Jenkins under
             Manage Jenkins -> Global Tools Configuration -> Octopus Deploy CLI.
         */
-        stage ('Add tools') {
-            steps {
-                sh "echo \"OctoCLI: ${tool('OctoCLI')}\""
-            }
-        }
+        //stage ('Add tools') {
+        //    steps {
+        //        sh "echo \"OctoCLI: ${tool('OctoCLI')}\""
+        //    }
+        //}
         stage('build') {
             steps {
                 // Update the Maven project version to match the current build
