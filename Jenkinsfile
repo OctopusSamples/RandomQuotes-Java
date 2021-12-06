@@ -15,8 +15,8 @@ pipeline {
         These are the tools we need for this pipeline. They are defined in Manage Jenkins -> Global Tools Configuration.
     */
     tools {
-        maven 'Maven 3'
-        jdk 'Java'
+        //maven 'Maven 3'
+        //jdk 'Java'
     }
     agent any
     stages {
