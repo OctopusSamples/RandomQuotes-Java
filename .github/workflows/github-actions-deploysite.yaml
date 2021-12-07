@@ -80,10 +80,15 @@ jobs:
         sudo apt update && sudo apt install octopuscli
       shell: bash
     
-    - name: Build Website      
+    - name: Build Website
+      env:
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}   
       run: |
-        mvn versions:set -DnewVersion=1.0.$BUILD_NUMBER
+        mvn versions:set -DnewVersion=${{ env.PACKAGE_VERSION }}
         mvn clean test package -Pwar
+        ls
+        /opt/octopus/octopuscli/octo pack --id RandomQuotes --version="${{ env.PACKAGE_VERSION }}" --format zip --overwrite
         
       shell: pwsh   
       
@@ -92,8 +97,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
       run: |
-        ls
-        /opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.${{ env.PACKAGE_VERSION }}" --format zip --overwrite
+        
         /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.nupkg" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
 
         Write-Host "Building the build information"
