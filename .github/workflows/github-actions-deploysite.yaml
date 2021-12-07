@@ -65,11 +65,11 @@ jobs:
         Write-Host "Setting environment variable CHANNEL_NAME to: $channelName"
         Write-Host "Setting environment variable ENVIRONMENT_NAME to: $deployEnvironment"
         Write-Host "Setting environment variable MERGED_BRANCH to: $mergedBranch"
-        echo "{BRANCH_NAME}={$branchName}" >> $GITHUB_ENV
-        echo "{PACKAGE_VERSION}={$versionNumber}" >> $GITHUB_ENV
-        echo "{CHANNEL_NAME}={$channelName}" >> $GITHUB_ENV
-        echo "{ENVIRONMENT_NAME}={$deployEnvironment}" >> $GITHUB_ENV
-        echo "{MERGED_BRANCH}={$mergedBranch}" >> $GITHUB_ENV
+        echo "BRANCH_NAME=$branchName" >> $GITHUB_ENV
+        echo "PACKAGE_VERSION=$versionNumber" >> $GITHUB_ENV
+        echo "CHANNEL_NAME=$channelName" >> $GITHUB_ENV
+        echo "ENVIRONMENT_NAME=$deployEnvironment" >> $GITHUB_ENV
+        echo "MERGED_BRANCH=$mergedBranch" >> $GITHUB_ENV
       shell: pwsh
 
     - name: Install Octopus Tooling
