@@ -20,9 +20,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Set up JDK 11
-        uses: actions/setup-java@v2
-        with:
+    - name: Setup Java JDK
+      uses: actions/setup-java@v2.4.0
+      with:
           java-version: '11'
           distribution: 'adopt'
     - name: Set environment variables      
