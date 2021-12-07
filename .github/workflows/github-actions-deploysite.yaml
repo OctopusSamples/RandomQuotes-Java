@@ -35,7 +35,8 @@ jobs:
         $versionFromFile = "1.0"
         Write-Host "Found $versionFromFile in versionprefix.md"
         $versionNumber = "$versionfromFile.$GITHUB_RUN_NUMBER"
-        
+        echo "$GITHUB_RUN_NUMBER"
+        echo "above me"
         $channelName = "Default"
         $deployEnvironment = "Development"
         $mergedBranch = ""
