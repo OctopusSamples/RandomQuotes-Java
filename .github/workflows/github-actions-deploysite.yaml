@@ -25,6 +25,8 @@ jobs:
       with:
           java-version: '11'
           distribution: 'adopt'
+    - shell: pwsh
+      run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH
     - name: Set environment variables      
       run: |
         $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
@@ -32,7 +34,7 @@ jobs:
 
         $versionFromFile = "1.0"
         Write-Host "Found $versionFromFile in versionprefix.md"
-        $versionNumber = "$versionfromFile.${env:GITHUB_RUN_NUMBER}"
+        $versionNumber = "$versionfromFile.${{env.GITHUB_RUN_NUMBER}}"
         
         $channelName = "Default"
         $deployEnvironment = "Development"
@@ -43,7 +45,7 @@ jobs:
 
         if ($branchName -ne "master")
         {
-           $versionNumber = "2020.99.99.${env:GITHUB_RUN_NUMBER}"
+           $versionNumber = "2020.99.99.${{env.GITHUB_RUN_NUMBER}}"
            $versionNumber = "$versionNumber-$branchName"
            $channelName = "Feature Branches"
            $deployEnvironment = "Test"           
@@ -63,12 +65,11 @@ jobs:
         Write-Host "Setting environment variable CHANNEL_NAME to: $channelName"
         Write-Host "Setting environment variable ENVIRONMENT_NAME to: $deployEnvironment"
         Write-Host "Setting environment variable MERGED_BRANCH to: $mergedBranch"
-
-        echo "::set-env name=BRANCH_NAME::$branchName"
-        echo "::set-env name=PACKAGE_VERSION::$versionNumber"
-        echo "::set-env name=CHANNEL_NAME::$channelName"
-        echo "::set-env name=ENVIRONMENT_NAME::$deployEnvironment"
-        echo "::set-env name=MERGED_BRANCH::$mergedBranch"
+        echo "{BRANCH_NAME}={$branchName}" >> $GITHUB_ENV
+        echo "{PACKAGE_VERSION}={$versionNumber}" >> $GITHUB_ENV
+        echo "{CHANNEL_NAME}={$channelName}" >> $GITHUB_ENV
+        echo "{ENVIRONMENT_NAME}={$deployEnvironment}" >> $GITHUB_ENV
+        echo "{MERGED_BRANCH}={$mergedBranch}" >> $GITHUB_ENV
       shell: pwsh
 
     - name: Install Octopus Tooling
@@ -76,11 +77,11 @@ jobs:
       shell: pwsh
 
     - name: Make Install Modules Folder
-      run: New-Item "$PSScriptRoot\${env:PACKAGES_FOLDER}" -ItemType Directory -Force
+      run: New-Item "$SScriptRoot\${{env.PACKAGES_FOLDER}}" -ItemType Directory -Force
       shell: pwsh
 
     - name: Make Packages Output Folder
-      run: New-Item "${env:OUTPUT_FOLDER}" -ItemType Directory
+      run: New-Item "${{env.OUTPUT_FOLDER}}" -ItemType Directory
       shell: pwsh
     
     - name: Build Website      
@@ -95,27 +96,27 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
       run: |        
-        octo pack --id RandomQuotes --version 1.0.${env:PACKAGE_VERSION} --format zip --overwrite
-        octo push --package="${env:OUTPUT_FOLDER}\${env:PACKAGE_NAME}.${env:PACKAGE_VERSION}.nupkg" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}"
+        octo pack --id RandomQuotes --version 1.0.${{env.PACKAGE_VERSION}} --format zip --overwrite
+        octo push --package="${{env.OUTPUT_FOLDER}}\${{env.PACKAGE_NAME}}.${{env.PACKAGE_VERSION}}.nupkg" --server="${{env.OCTOPUS_URL}}" --apiKey="${{env.OCTOPUS_API_KEY}}" --space="${{env.OCTOPUS_SPACE_NAME}}"
 
         Write-Host "Building the build information"
         
         $commitMessage = git log -1 --pretty=oneline
-        $commitMessage = $commitMessage -replace "${env:GITHUB_SHA} ", ""
+        $commitMessage = $commitMessage -replace "${{env.GITHUB_SHA}} ", ""
         Write-Host "Commit Message: $commitMessage"        
 
         $jsonBody = @{
           BuildEnvironment = "GitHub Actions"
-          Branch = "${env:BRANCH_NAME}"
-          BuildNumber = "${env:GITHUB_RUN_NUMBER}"
-          BuildUrl = "https://github.com/${env:GITHUB_REPOSITORY}/actions/runs/${env:GITHUB_RUN_ID}"
-          VcsCommitNumber = "${env:GITHUB_SHA}"
+          Branch = "${{env.BRANCH_NAME}}"
+          BuildNumber = "${{env.GITHUB_RUN_NUMBER}}"
+          BuildUrl = "https://github.com/${{env.GITHUB_REPOSITORY}}/actions/runs/${{env.GITHUB_RUN_ID}}"
+          VcsCommitNumber = "${{env.GITHUB_SHA}}"
           VcsType = "Git"
-          VcsRoot = "https://github.com/${env:GITHUB_REPOSITORY}.git"
+          VcsRoot = "https://github.com/${{env.GITHUB_REPOSITORY}}.git"
           Commits = @(
             @{
-              Id = "${env:GITHUB_SHA}"
-              LinkUrl = "https://github.com/${env:GITHUB_REPOSITORY}/commit/${env:GITHUB_SHA}"
+              Id = "${{env.GITHUB_SHA}}"
+              LinkUrl = "https://github.com/${{env.GITHUB_REPOSITORY}}/commit/${{env.GITHUB_SHA}}"
               Comment = "$commitMessage"
             }
           )
@@ -124,7 +125,7 @@ jobs:
         New-Item "buildinformation.json" -ItemType File
         Set-Content -Path "buildinformation.json" -Value $jsonBody
 
-        octo build-information --package-id="${env:PACKAGE_NAME}" --file="buildinformation.json" --version="${env:PACKAGE_VERSION}" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}"
-        octo create-release --project="${env:OCTOPUS_PROJECT_NAME}" --packageVersion="${env:PACKAGE_VERSION}" --releaseNumber="${env:PACKAGE_VERSION}" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}" --deployTo="${env:ENVIRONMENT_NAME}" --channel="${env:CHANNEL_NAME}" --variable="Feature Branch Name:${env:BRANCH_NAME}" --variable="Merged Branch Name:${env:MERGED_BRANCH}"
+        octo build-information --package-id="${{env.PACKAGE_NAME}}" --file="buildinformation.json" --version="${{env.PACKAGE_VERSION}" --server="${{env.OCTOPUS_URL}" --apiKey="${{env.OCTOPUS_API_KEY}}" --space="${{env.OCTOPUS_SPACE_NAME}}"
+        octo create-release --project="${{env.OCTOPUS_PROJECT_NAME}}" --packageVersion="${{env.PACKAGE_VERSION}}" --releaseNumber="${{env.PACKAGE_VERSION}}" --server="${{env.OCTOPUS_URL}}" --apiKey="${{env.OCTOPUS_API_KEY}}" --space="${{env.OCTOPUS_SPACE_NAME}}" --deployTo="${{env.ENVIRONMENT_NAME}}" --channel="${{env.CHANNEL_NAME}}" --variable="Feature Branch Name:${{env.BRANCH_NAME}}" --variable="Merged Branch Name:${{env.MERGED_BRANCH}}"
 
       shell: pwsh        
