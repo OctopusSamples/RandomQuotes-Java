@@ -34,10 +34,7 @@ jobs:
 
         $versionFromFile = "1.0"
         Write-Host "Found $versionFromFile in versionprefix.md"
-        $versionNumber = "$versionfromFile.$GITHUB_RUN_NUMBER"
-        echo "${{ github.RUN_NUMBER }}"
-        echo "${{ github.REF }}"
-        echo "above me"
+        $versionNumber = "$versionfromFile.${{ github.RUN_NUMBER }}"
         $channelName = "Default"
         $deployEnvironment = "Development"
         $mergedBranch = ""
@@ -75,15 +72,19 @@ jobs:
       shell: pwsh
 
     - name: Install Octopus Tooling
-      run: choco install octopustools -y
-      shell: pwsh
+      run: |
+        sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
+        curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
+        sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
+        sudo apt update && sudo apt install octopuscli
+      shell: bash
 
     - name: Make Install Modules Folder
-      run: New-Item "$SScriptRoot\${{env.PACKAGES_FOLDER}}" -ItemType Directory -Force
+      run: New-Item "$SScriptRoot\${{ env.PACKAGES_FOLDER }}" -ItemType Directory -Force
       shell: pwsh
 
     - name: Make Packages Output Folder
-      run: New-Item "${{env.OUTPUT_FOLDER}}" -ItemType Directory
+      run: New-Item "${{ env.OUTPUT_FOLDER }}" -ItemType Directory
       shell: pwsh
     
     - name: Build Website      
@@ -92,5 +93,44 @@ jobs:
         mvn clean test package -Pwar
         
       shell: pwsh   
+      
+    - name: Handoff to Octopus Deploy
+      env:
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
+      run: |
+        /opt/octopus/octo pack --id RandomQuotes --version="1.0.${{ env.PACKAGE_VERSION }}" --format zip --overwrite
+        /opt/octopus/octo push --package="${{ env.OUTPUT_FOLDER }}\${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.nupkg" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+
+        Write-Host "Building the build information"
+        
+        $commitMessage = git log -1 --pretty=oneline
+        $commitMessage = $commitMessage -replace "${{ env.GITHUB_SHA }} ", ""
+        Write-Host "Commit Message: $commitMessage"        
+
+        $jsonBody = @{
+          BuildEnvironment = "GitHub Actions"
+          Branch = "${{ env.BRANCH_NAME }}"
+          BuildNumber = "${{ env.GITHUB_RUN_NUMBER }}"
+          BuildUrl = "https://github.com/${{env.GITHUB_REPOSITORY}}/actions/runs/${{ env.GITHUB_RUN_ID }}"
+          VcsCommitNumber = "${{ env.GITHUB_SHA }}"
+          VcsType = "Git"
+          VcsRoot = "https://github.com/${{ env.GITHUB_REPOSITORY }}.git"
+          Commits = @(
+            @{
+              Id = "${{env.GITHUB_SHA}}"
+              LinkUrl = "https://github.com/${{ env.GITHUB_REPOSITORY }}/commit/${{ env.GITHUB_SHA }}"
+              Comment = "$commitMessage"
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+
+        New-Item "buildinformation.json" -ItemType File
+        Set-Content -Path "buildinformation.json" -Value $jsonBody
+
+        /opt/octopus/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="${{ env.PACKAGE_VERSION }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+        /opt/octopus/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="${{ env.PACKAGE_VERSION }}" --releaseNumber="${{ env.PACKAGE_VERSION }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT_NAME }}" --channel="${{ env.CHANNEL_NAME }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
+
+      shell: pwsh        
       
     
