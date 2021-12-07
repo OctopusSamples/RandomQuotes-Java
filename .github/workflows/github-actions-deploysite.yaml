@@ -91,6 +91,7 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
       run: |
+        ls
         /opt/octopus/octo pack --id RandomQuotes --version="1.0.${{ env.PACKAGE_VERSION }}" --format zip --overwrite
         /opt/octopus/octo push --package="${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.nupkg" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
 
