@@ -1,0 +1,130 @@
+name: Deploy Website
+
+on:
+  push:
+    branches: 
+      - master
+
+env:  
+  PACKAGES_FOLDER: Modules
+  OUTPUT_FOLDER: PackagesOutput
+  PACKAGE_NAME: RandomQuotes
+  OCTOPUS_PROJECT_NAME: RandomQuotes  
+  OCTOPUS_SPACE_NAME: JeremyM
+
+jobs:
+  build:
+    name: Build and Push Website
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 11
+        uses: actions/setup-java@v2
+        with:
+          java-version: '11'
+          distribution: 'adopt'
+    - name: Set environment variables      
+      run: |
+        $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
+        Write-Host "$branchName"  
+
+        $versionFromFile = "1.0"
+        Write-Host "Found $versionFromFile in versionprefix.md"
+        $versionNumber = "$versionfromFile.${env:GITHUB_RUN_NUMBER}"
+        
+        $channelName = "Default"
+        $deployEnvironment = "Development"
+        $mergedBranch = ""
+
+        $commitMessage = git log -1 --pretty=oneline
+        Write-Host "The commit message is: $commitMessage"
+
+        if ($branchName -ne "master")
+        {
+           $versionNumber = "2020.99.99.${env:GITHUB_RUN_NUMBER}"
+           $versionNumber = "$versionNumber-$branchName"
+           $channelName = "Feature Branches"
+           $deployEnvironment = "Test"           
+        }
+        elseif ($branchName -eq "master" -and $commitMessage -like "*Merge pull request*")
+        {          
+          $indexOfSlash = $commitMessage.ToString().IndexOf('/')
+          Write-Host "The index of the slash is $indexOfSlash"
+          $mergedBranch = $commitMessage.SubString($commitMessage.IndexOf("/") + 1)
+          Write-Host "The merged branch before replacement is $mergedBranch"
+          $mergedBranch = ($mergedBranch -replace "feature/", "") -replace "bugfix/", ""          
+          Write-Host "The merged branch is now $mergedBranch"
+        }
+
+        Write-Host "Setting environment variable PACKAGE_VERSION to: $versionNumber"
+        Write-Host "Setting environment variable BRANCH_NAME to: $branchName"
+        Write-Host "Setting environment variable CHANNEL_NAME to: $channelName"
+        Write-Host "Setting environment variable ENVIRONMENT_NAME to: $deployEnvironment"
+        Write-Host "Setting environment variable MERGED_BRANCH to: $mergedBranch"
+
+        echo "::set-env name=BRANCH_NAME::$branchName"
+        echo "::set-env name=PACKAGE_VERSION::$versionNumber"
+        echo "::set-env name=CHANNEL_NAME::$channelName"
+        echo "::set-env name=ENVIRONMENT_NAME::$deployEnvironment"
+        echo "::set-env name=MERGED_BRANCH::$mergedBranch"
+      shell: powershell
+
+    - name: Install Octopus Tooling
+      run: choco install octopustools -y
+      shell: powershell
+
+    - name: Make Install Modules Folder
+      run: New-Item "$PSScriptRoot\${env:PACKAGES_FOLDER}" -ItemType Directory -Force
+      shell: powershell
+
+    - name: Make Packages Output Folder
+      run: New-Item "${env:OUTPUT_FOLDER}" -ItemType Directory
+      shell: powershell
+    
+    - name: Build Website      
+      run: |
+        mvn versions:set -DnewVersion=1.0.$BUILD_NUMBER
+        mvn clean test package -Pwar
+        
+      shell: powershell   
+      
+    - name: Handoff to Octopus Deploy
+      env:
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
+      run: |        
+        octo pack --id RandomQuotes --version 1.0.${env:PACKAGE_VERSION} --format zip --overwrite
+        octo push --package="${env:OUTPUT_FOLDER}\${env:PACKAGE_NAME}.${env:PACKAGE_VERSION}.nupkg" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}"
+
+        Write-Host "Building the build information"
+        
+        $commitMessage = git log -1 --pretty=oneline
+        $commitMessage = $commitMessage -replace "${env:GITHUB_SHA} ", ""
+        Write-Host "Commit Message: $commitMessage"        
+
+        $jsonBody = @{
+          BuildEnvironment = "GitHub Actions"
+          Branch = "${env:BRANCH_NAME}"
+          BuildNumber = "${env:GITHUB_RUN_NUMBER}"
+          BuildUrl = "https://github.com/${env:GITHUB_REPOSITORY}/actions/runs/${env:GITHUB_RUN_ID}"
+          VcsCommitNumber = "${env:GITHUB_SHA}"
+          VcsType = "Git"
+          VcsRoot = "https://github.com/${env:GITHUB_REPOSITORY}.git"
+          Commits = @(
+            @{
+              Id = "${env:GITHUB_SHA}"
+              LinkUrl = "https://github.com/${env:GITHUB_REPOSITORY}/commit/${env:GITHUB_SHA}"
+              Comment = "$commitMessage"
+            }
+          )
+        } | ConvertTo-Json -Depth 10
+
+        New-Item "buildinformation.json" -ItemType File
+        Set-Content -Path "buildinformation.json" -Value $jsonBody
+
+        octo build-information --package-id="${env:PACKAGE_NAME}" --file="buildinformation.json" --version="${env:PACKAGE_VERSION}" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}"
+        octo create-release --project="${env:OCTOPUS_PROJECT_NAME}" --packageVersion="${env:PACKAGE_VERSION}" --releaseNumber="${env:PACKAGE_VERSION}" --server="${env:OCTOPUS_URL}" --apiKey="${env:OCTOPUS_API_KEY}" --space="${env:OCTOPUS_SPACE_NAME}" --deployTo="${env:ENVIRONMENT_NAME}" --channel="${env:CHANNEL_NAME}" --variable="Feature Branch Name:${env:BRANCH_NAME}" --variable="Merged Branch Name:${env:MERGED_BRANCH}"
+
+      shell: powershell        
