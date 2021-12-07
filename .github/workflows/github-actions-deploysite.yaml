@@ -78,14 +78,6 @@ jobs:
         sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
         sudo apt update && sudo apt install octopuscli
       shell: bash
-
-    - name: Make Install Modules Folder
-      run: New-Item "$SScriptRoot\${{ env.PACKAGES_FOLDER }}" -ItemType Directory -Force
-      shell: pwsh
-
-    - name: Make Packages Output Folder
-      run: New-Item "${{ env.OUTPUT_FOLDER }}" -ItemType Directory
-      shell: pwsh
     
     - name: Build Website      
       run: |
@@ -100,7 +92,7 @@ jobs:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
       run: |
         /opt/octopus/octo pack --id RandomQuotes --version="1.0.${{ env.PACKAGE_VERSION }}" --format zip --overwrite
-        /opt/octopus/octo push --package="${{ env.OUTPUT_FOLDER }}\${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.nupkg" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+        /opt/octopus/octo push --package="${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.nupkg" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
 
         Write-Host "Building the build information"
         
