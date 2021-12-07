@@ -34,7 +34,7 @@ jobs:
 
         $versionFromFile = "1.0"
         Write-Host "Found $versionFromFile in versionprefix.md"
-        $versionNumber = "$versionfromFile.${{env.GITHUB_RUN_NUMBER}}"
+        $versionNumber = "$versionfromFile.${{ env.GITHUB_RUN_NUMBER }}"
         
         $channelName = "Default"
         $deployEnvironment = "Development"
