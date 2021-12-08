@@ -106,7 +106,7 @@ jobs:
         Write-Host "Building the build information"
         
         $commitMessage = git log -1 --pretty=oneline
-        $commitMessage = $commitMessage -replace "${{ env.GITHUB_SHA }} ", ""
+        $commitMessage = $commitMessage -replace "${{ github.SHA }} ", ""
         Write-Host "Commit Message: $commitMessage"        
 
         $jsonBody = @{
