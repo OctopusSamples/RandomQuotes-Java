@@ -31,7 +31,7 @@ jobs:
       run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH
       #run: echo "mypath" | Out-File -FilePath ${{ github.path }}
     - name: Set environment variables
-      id: step one
+      id: step_one
       run: |
         $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
         Write-Host "$branchName"  
@@ -76,7 +76,7 @@ jobs:
       shell: pwsh
 
     - name: Install Octopus Tooling
-      id: step two
+      id: step_two
       run: |
         sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
         curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
@@ -85,7 +85,7 @@ jobs:
       shell: bash
     
     - name: Build Website
-      id: step three
+      id: step_three
       env:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
@@ -103,7 +103,7 @@ jobs:
       shell: pwsh   
       
     - name: Handoff to Octopus Deploy
-      id: step four
+      id: step_four
       env:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
