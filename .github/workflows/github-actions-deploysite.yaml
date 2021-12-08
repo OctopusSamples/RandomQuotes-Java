@@ -30,6 +30,7 @@ jobs:
     - shell: pwsh
       run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH
       #run: echo "mypath" | Out-File -FilePath ${{ github.path }}
+    
     - name: Set environment variables
       id: step_one
       run: |
@@ -73,6 +74,7 @@ jobs:
         echo "CHANNEL_NAME=$channelName" >> $GITHUB_ENV
         echo "ENVIRONMENT_NAME=$deployEnvironment" >> $GITHUB_ENV
         echo "MERGED_BRANCH=$mergedBranch" >> $GITHUB_ENV
+      shell: pwsh
 
     - name: Install Octopus CLI
       uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
@@ -94,6 +96,7 @@ jobs:
         ls
         #/opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.${{ github.RUN_NUMBER }}" --format zip --overwrite
         /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"  
+      shell: pwsh
       
     - name: Handoff to Octopus Deploy
       id: step_four
@@ -133,5 +136,5 @@ jobs:
         /opt/octopus/octopuscli/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
         /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
         echo "${{ env.PACKAGE_VERSION }}"      
-      
+      shell: pwsh
     
