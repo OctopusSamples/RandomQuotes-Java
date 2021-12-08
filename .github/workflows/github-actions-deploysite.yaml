@@ -11,6 +11,8 @@ env:
   PACKAGE_NAME: RandomQuotes
   OCTOPUS_PROJECT_NAME: RandomQuotes  
   OCTOPUS_SPACE_NAME: JeremyM
+  ENVIRONMENT: Development
+  CHANNEL: Default
 
 jobs:
   build:
@@ -109,7 +111,7 @@ jobs:
 
         $jsonBody = @{
           BuildEnvironment = "GitHub Actions"
-          Branch = "${{ github.GITHUB_REF_NAME }}"
+          Branch = "${{ github.REF_NAME }}"
           BuildNumber = "${{ github.RUN_NUMBER }}"
           BuildUrl = "https://github.com/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
           VcsCommitNumber = "${{ github.SHA }}"
@@ -128,7 +130,7 @@ jobs:
         Set-Content -Path "buildinformation.json" -Value $jsonBody
 
         /opt/octopus/octopuscli/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
-        /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT_NAME }}" --channel="${{ env.CHANNEL_NAME }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
+        /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
 
       shell: pwsh        
       
