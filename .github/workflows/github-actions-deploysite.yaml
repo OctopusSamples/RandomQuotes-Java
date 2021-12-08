@@ -110,15 +110,15 @@ jobs:
         $jsonBody = @{
           BuildEnvironment = "GitHub Actions"
           Branch = "${{ env.BRANCH_NAME }}"
-          BuildNumber = "${{ env.GITHUB_RUN_NUMBER }}"
-          BuildUrl = "https://github.com/${{env.GITHUB_REPOSITORY}}/actions/runs/${{ env.GITHUB_RUN_ID }}"
-          VcsCommitNumber = "${{ env.GITHUB_SHA }}"
+          BuildNumber = "${{ github.RUN_NUMBER }}"
+          BuildUrl = "https://github.com/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
+          VcsCommitNumber = "${{ github.SHA }}"
           VcsType = "Git"
-          VcsRoot = "https://github.com/${{ env.GITHUB_REPOSITORY }}.git"
+          VcsRoot = "https://github.com/${{ github.REPOSITORY }}.git"
           Commits = @(
             @{
-              Id = "${{env.GITHUB_SHA}}"
-              LinkUrl = "https://github.com/${{ env.GITHUB_REPOSITORY }}/commit/${{ env.GITHUB_SHA }}"
+              Id = "${{ github.SHA }}"
+              LinkUrl = "https://github.com/${{ github.REPOSITORY }}/commit/${{ github.SHA }}"
               Comment = "$commitMessage"
             }
           )
