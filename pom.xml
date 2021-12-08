@@ -5,7 +5,7 @@
 
     <groupId>com.octopus</groupId>
     <artifactId>randomquotes</artifactId>
-    <version>0.1.7</version>
+    <version>1.0.${{ github.RUN_NUMBER }}</version>
     <packaging>${packaging.type}</packaging>
 
     <parent>
