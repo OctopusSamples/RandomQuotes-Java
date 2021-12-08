@@ -4,11 +4,13 @@ on:
   push:
     branches: 
       - master
+  workflow_dispatch:
 jobs:
   build:
     name: Test Output Vars
 
     runs-on: ubuntu-latest
+    
 
     steps:
     - uses: actions/checkout@v2
@@ -18,8 +20,10 @@ jobs:
       id: step_one
       run: |
         echo "action_state=yellow" >> $GITHUB_ENV
+      shell: pwsh
     - name: Use the value
       id: step_two
       run: |
         echo "${{ env.action_state }}" # This will output 'yellow'
+      shell: pwsh
       
