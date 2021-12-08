@@ -87,8 +87,9 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
-        mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
-        mvn clean test package -Pwar
+        #mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
+        #mvn clean test package -Pwar
+        mvn -B package --file pom.xml
         cd target
         ls
         Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war"
