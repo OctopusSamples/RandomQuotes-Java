@@ -20,12 +20,14 @@ jobs:
       id: step_one
       run: |
         echo "action_state=yellow" >> $GITHUB_ENV
-        echo "action_state2=red" | Out-File -FilePath $env:GITHUB_PATH -Append
+        echo "action_state2=red" | Out-File -FilePath $env:GITHUB_ENV  -Append
+        echo "MY_VARIABLE=hello" | Out-File -FilePath $Env:GITHUB_ENV -Encoding utf-8 -Append
       shell: pwsh
     - name: Use the value
       id: step_two
       run: |
         echo "${{ env.action_state }}" # This will output 'yellow'
         echo "${{ env.action_state2 }}" # This will output 'red'
+        echo "${{ env.MY_VARIABLE }}" # This will output 'hello'
       shell: pwsh
       
