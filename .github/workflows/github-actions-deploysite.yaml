@@ -31,7 +31,7 @@ jobs:
       run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH
     - name: Set environment variables      
       run: |
-        $branchName = (($GITHUB_REF -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
+        $branchName = $GITHUB_REF_NAME
         Write-Host "$branchName"  
 
         $versionFromFile = "1.0"
