@@ -73,16 +73,11 @@ jobs:
         echo "CHANNEL_NAME=$channelName" >> $GITHUB_ENV
         echo "ENVIRONMENT_NAME=$deployEnvironment" >> $GITHUB_ENV
         echo "MERGED_BRANCH=$mergedBranch" >> $GITHUB_ENV
-      shell: pwsh
 
-    - name: Install Octopus Tooling
-      id: step_two
-      run: |
-        sudo apt update && sudo apt install --no-install-recommends gnupg curl ca-certificates apt-transport-https && \
-        curl -sSfL https://apt.octopus.com/public.key | sudo apt-key add - && \
-        sudo sh -c "echo deb https://apt.octopus.com/ stable main > /etc/apt/sources.list.d/octopus.com.list" && \
-        sudo apt update && sudo apt install octopuscli
-      shell: bash
+    - name: Install Octopus CLI
+      uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
+      with:
+        version: latest
     
     - name: Build Website
       id: step_three
@@ -98,9 +93,7 @@ jobs:
         Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war"
         ls
         #/opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.${{ github.RUN_NUMBER }}" --format zip --overwrite
-        /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
-        
-      shell: pwsh   
+        /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"  
       
     - name: Handoff to Octopus Deploy
       id: step_four
@@ -139,7 +132,6 @@ jobs:
 
         /opt/octopus/octopuscli/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
         /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
-        echo "${{ env.PACKAGE_VERSION }}"
-      shell: pwsh        
+        echo "${{ env.PACKAGE_VERSION }}"      
       
     
