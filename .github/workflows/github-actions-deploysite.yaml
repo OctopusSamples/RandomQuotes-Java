@@ -28,15 +28,15 @@ jobs:
           distribution: 'adopt'
     - shell: pwsh
       #run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH
-      run: echo "mypath" | Out-File -FilePath ${{ github.path }}
+      run: echo "mypath" | Out-File -FilePath $GITHUB_path
     - name: Set environment variables      
       run: |
-        $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
+        $branchName = (($GITHUB_REF -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
         Write-Host "$branchName"  
 
         $versionFromFile = "1.0"
         Write-Host "Found $versionFromFile in versionprefix.md"
-        $versionNumber = "$versionfromFile.${{ github.RUN_NUMBER }}"
+        $versionNumber = "$versionfromFile.$GITHUB_RUN_NUMBER"
         $channelName = "Default"
         $deployEnvironment = "Development"
         $mergedBranch = ""
@@ -46,7 +46,7 @@ jobs:
 
         if ($branchName -ne "master")
         {
-           $versionNumber = "2020.99.99.${{env.GITHUB_RUN_NUMBER}}"
+           $versionNumber = "2020.99.99.$GITHUB_RUN_NUMBER"
            $versionNumber = "$versionNumber-$branchName"
            $channelName = "Feature Branches"
            $deployEnvironment = "Test"           
@@ -86,11 +86,11 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
-        mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
+        mvn versions:set -DnewVersion=1.0.$GITHUB_RUN_NUMBER
         mvn clean test package -Pwar
         ls
-        /opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.${{ github.RUN_NUMBER }}" --format zip --overwrite
-        /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.zip" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+        /opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.$GITHUB_RUN_NUMBER" --format zip --overwrite
+        /opt/octopus/octopuscli/octo push --package="${{ env.PACKAGE_NAME }}.1.0.$GITHUB_RUN_NUMBER.zip" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
         
       shell: pwsh   
       
@@ -105,21 +105,21 @@ jobs:
         Write-Host "Building the build information"
         
         $commitMessage = git log -1 --pretty=oneline
-        $commitMessage = $commitMessage -replace "${{ env.GITHUB_SHA }} ", ""
+        $commitMessage = $commitMessage -replace "$GITHUB_SHA ", ""
         Write-Host "Commit Message: $commitMessage"        
 
         $jsonBody = @{
           BuildEnvironment = "GitHub Actions"
-          Branch = "${{ github.REF_NAME }}"
-          BuildNumber = "${{ github.RUN_NUMBER }}"
-          BuildUrl = "https://github.com/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
-          VcsCommitNumber = "${{ github.SHA }}"
+          Branch = "$GITHUB_REF_NAME"
+          BuildNumber = "$GITHUB_RUN_NUMBER"
+          BuildUrl = "https://github.com/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+          VcsCommitNumber = "$GITHUB_SHA"
           VcsType = "Git"
-          VcsRoot = "https://github.com/${{ github.REPOSITORY }}.git"
+          VcsRoot = "https://github.com/$GITHUB_REPOSITORY.git"
           Commits = @(
             @{
-              Id = "${{ github.SHA }}"
-              LinkUrl = "https://github.com/${{ github.REPOSITORY }}/commit/${{ github.SHA }}"
+              Id = "$GITHUB_SHA"
+              LinkUrl = "https://github.com/$GITHUB_REPOSITORY/commit/$GITHUB_SHA"
               Comment = "$commitMessage"
             }
           )
@@ -128,8 +128,8 @@ jobs:
         New-Item "buildinformation.json" -ItemType File
         Set-Content -Path "buildinformation.json" -Value $jsonBody
 
-        /opt/octopus/octopuscli/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
-        /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
+        /opt/octopus/octopuscli/octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.$GITHUB_RUN_NUMBER" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+        /opt/octopus/octopuscli/octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.$GITHUB_RUN_NUMBER" --releaseNumber="1.0.$GITHUB_RUN_NUMBER" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
 
       shell: pwsh        
       
