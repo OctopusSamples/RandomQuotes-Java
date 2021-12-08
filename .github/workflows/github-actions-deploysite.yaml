@@ -8,7 +8,7 @@ on:
 env:  
   PACKAGES_FOLDER: Modules
   OUTPUT_FOLDER: PackagesOutput
-  PACKAGE_NAME: RandomQuotes
+  PACKAGE_NAME: randomquotes
   OCTOPUS_PROJECT_NAME: RandomQuotes  
   OCTOPUS_SPACE_NAME: JeremyM
   ENVIRONMENT: Development
@@ -87,9 +87,9 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
-        #mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
-        #mvn clean test package -Pwar
-        mvn -B package --file pom.xml
+        mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
+        mvn clean test package -Pwar
+        #mvn -B package --file pom.xml
         cd target
         ls
         #Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war"
