@@ -109,7 +109,7 @@ jobs:
 
         $jsonBody = @{
           BuildEnvironment = "GitHub Actions"
-          Branch = "${{ env.BRANCH_NAME }}"
+          Branch = "${{ github.GITHUB_REF_NAME }}"
           BuildNumber = "${{ github.RUN_NUMBER }}"
           BuildUrl = "https://github.com/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
           VcsCommitNumber = "${{ github.SHA }}"
