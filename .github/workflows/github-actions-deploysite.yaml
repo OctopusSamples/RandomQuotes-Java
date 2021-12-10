@@ -57,7 +57,7 @@ jobs:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
         $version = "${{ env.PACKAGE_VERSION }}"
-        mvn versions:set -DnewVersion=$version
+        mvn versions:set -DnewVersion="1.0.0"
         mvn clean test package -Pwar
         cd target
         ls
