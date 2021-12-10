@@ -63,6 +63,9 @@ jobs:
         cd target
         ls
         ${{ env.PACKAGE_VERSION }}
+        ${{ env.PACKAGE_VERSION }}.value
+        ${{ env.PACKAGE_VERSION }}.toString
+        Write-Host "Test"
         #Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war"
       shell: pwsh
       
