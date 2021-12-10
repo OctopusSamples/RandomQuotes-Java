@@ -56,15 +56,11 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
-        ${{ env.PACKAGE_VERSION }}
-        $version = "${{ env.PACKAGE_VERSION }}"
-        mvn versions:set -newVersion=$version
+        #$version = "${{ env.PACKAGE_VERSION }}"
+        mvn versions:set -newVersion="${{ env.PACKAGE_VERSION }}"
         mvn clean test package -Pwar
         cd target
         ls
-        ${{ env.PACKAGE_VERSION }}
-        ${{ env.PACKAGE_VERSION }}.value
-        ${{ env.PACKAGE_VERSION }}.toString
         Write-Host "Test"
         #Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war"
       shell: pwsh
