@@ -56,12 +56,14 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
+        ${{ env.PACKAGE_VERSION }}
         $version = "${{ env.PACKAGE_VERSION }}"
         mvn versions:set -newVersion=$version
         mvn clean test package -Pwar
         cd target
         ls
-        #Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }} .war"
+        ${{ env.PACKAGE_VERSION }}
+        #Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war"
       shell: pwsh
       
     - name: Install Octopus CLI
