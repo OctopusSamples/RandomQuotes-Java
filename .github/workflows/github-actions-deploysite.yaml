@@ -95,8 +95,18 @@ jobs:
         Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war"
         ls
         #/opt/octopus/octopuscli/octo pack --id RandomQuotes --version="1.0.${{ github.RUN_NUMBER }}" --format zip --overwrite
-        octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"  
+        #octo push --package="${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"  
       shell: pwsh
+      
+    - name: Push Package to Octopus Deploy
+      uses: OctopusDeploy/push-package-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+        log_level: verbose
+        overwrite_mode: OverwriteExisting
+        packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ env.OCTOPUS_SPACE_NAME }}
       
     - name: Handoff to Octopus Deploy
       id: step_four
