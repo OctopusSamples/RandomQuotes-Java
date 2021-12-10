@@ -4,7 +4,6 @@ on:
   push:
     branches: 
       - master
-
 env:  
   PACKAGES_FOLDER: Modules
   OUTPUT_FOLDER: PackagesOutput
@@ -17,59 +16,38 @@ env:
 jobs:
   build:
     name: Build and Push Website
-
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    #- name: Setup Java JDK
-    #  uses: actions/setup-java@v2.4.0
-    #  with:
-    #      java-version: '11'
-    #      distribution: 'adopt'
-    
+    - uses: actions/checkout@v2    
     - name: Set environment variables
       run: |
         $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
         Write-Host "$branchName"  
 
-        $versionFromFile = "1.0"
-        Write-Host "Found $versionFromFile in versionprefix.md"
-        $versionNumber = "$versionfromFile.${{ github.RUN_NUMBER }}"
+        $defaultVersionPrefix = "1.0"
+        $versionNumber = "$defaultVersionPrefix.${{ github.RUN_NUMBER }}"
         $channelName = "Default"
         $deployEnvironment = "Development"
-        $mergedBranch = ""
 
         $commitMessage = git log -1 --pretty=oneline
         Write-Host "The commit message is: $commitMessage"
 
         if ($branchName -ne "master")
         {
-           $versionNumber = "2020.99.99.${{env.GITHUB_RUN_NUMBER}}"
-           $versionNumber = "$versionNumber-$branchName"
+           $versionNumber = "0.0.${{env.GITHUB_RUN_NUMBER}}"
            $channelName = "Feature Branches"
            $deployEnvironment = "Test"           
-        }
-        elseif ($branchName -eq "master" -and $commitMessage -like "*Merge pull request*")
-        {          
-          $indexOfSlash = $commitMessage.ToString().IndexOf('/')
-          Write-Host "The index of the slash is $indexOfSlash"
-          $mergedBranch = $commitMessage.SubString($commitMessage.IndexOf("/") + 1)
-          Write-Host "The merged branch before replacement is $mergedBranch"
-          $mergedBranch = ($mergedBranch -replace "feature/", "") -replace "bugfix/", ""          
-          Write-Host "The merged branch is now $mergedBranch"
         }
 
         Write-Host "Setting environment variable PACKAGE_VERSION to: $versionNumber"
         Write-Host "Setting environment variable BRANCH_NAME to: $branchName"
         Write-Host "Setting environment variable CHANNEL_NAME to: $channelName"
         Write-Host "Setting environment variable ENVIRONMENT_NAME to: $deployEnvironment"
-        Write-Host "Setting environment variable MERGED_BRANCH to: $mergedBranch"
         echo "BRANCH_NAME=$branchName" | Out-File -FilePath $env:GITHUB_ENV  -Append
         echo "PACKAGE_VERSION=$versionNumber" | Out-File -FilePath $env:GITHUB_ENV  -Append
         echo "CHANNEL_NAME=$channelName" | Out-File -FilePath $env:GITHUB_ENV  -Append
         echo "ENVIRONMENT_NAME=$deployEnvironment" | Out-File -FilePath $env:GITHUB_ENV  -Append
-        echo "MERGED_BRANCH=$mergedBranch" | Out-File -FilePath $env:GITHUB_ENV  -Append
       shell: pwsh
     
     - name: Build Website
@@ -80,7 +58,7 @@ jobs:
         mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
         mvn clean test package -Pwar
         cd target
-        Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war"
+        Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }} .war"
       shell: pwsh
       
     - name: Install Octopus CLI
@@ -94,7 +72,7 @@ jobs:
         api_key: ${{ secrets.OCTOPUS_API_KEY }}
         log_level: verbose
         overwrite_mode: OverwriteExisting
-        packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war
+        packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }} }.war
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
 
@@ -127,7 +105,7 @@ jobs:
 
         New-Item "buildinformation.json" -ItemType File
         Set-Content -Path "buildinformation.json" -Value $jsonBody
-        octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+        octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="${{ env.PACKAGE_VERSION }} " --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
      
       shell: pwsh
       
@@ -135,12 +113,12 @@ jobs:
       uses: OctopusDeploy/create-release-action@v1.1.1
       with:
         api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        channel: ${{ env.CHANNEL }}
-        deploy_to: ${{ env.ENVIRONMENT }}
+        channel: ${{ env.CHANNEL_NAME }}
+        deploy_to: ${{ env.ENVIRONMENT_NAME }}
         log_level: verbose
-        package_version: 1.0.${{ github.RUN_NUMBER }}
+        package_version: ${{ env.PACKAGE_VERSION }} 
         project: ${{ env.OCTOPUS_PROJECT_NAME }}
-        release_number: 1.0.${{ github.RUN_NUMBER }}
+        release_number: ${{ env.PACKAGE_VERSION }} 
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
     
