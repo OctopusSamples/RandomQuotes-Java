@@ -22,17 +22,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup Java JDK
-      uses: actions/setup-java@v2.4.0
-      with:
-          java-version: '11'
-          distribution: 'adopt'
-    - shell: pwsh
-      run: echo "mypath" | Out-File -FilePath $env:GITHUB_PATH -Append
-      #run: echo "mypath" | Out-File -FilePath ${{ github.path }}
+    #- name: Setup Java JDK
+    #  uses: actions/setup-java@v2.4.0
+    #  with:
+    #      java-version: '11'
+    #      distribution: 'adopt'
     
     - name: Set environment variables
-      id: step_one
       run: |
         $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
         Write-Host "$branchName"  
@@ -77,7 +73,6 @@ jobs:
       shell: pwsh
     
     - name: Build Website
-      id: step_three
       env:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
@@ -102,35 +97,8 @@ jobs:
         packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.1.0.${{ github.RUN_NUMBER }}.war
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
-        
-    - name: Create Release in Octopus Deploy
-      uses: OctopusDeploy/create-release-action@v1.1.1
-      with:
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        channel: ${{ env.CHANNEL }}
-        deploy_to: ${{ env.ENVIRONMENT }}
-        log_level: verbose
-        package_version: 1.0.${{ github.RUN_NUMBER }}
-        project: ${{ env.OCTOPUS_PROJECT_NAME }}
-        release_number: 1.0.${{ github.RUN_NUMBER }}
-        server: ${{ secrets.OCTOPUS_URL }}
-        space: ${{ env.OCTOPUS_SPACE_NAME }}
 
-    - name: Octopus Deploy Build Information
-  # You may pin to the exact commit or the version.
-  # uses: xo-energy/action-octopus-build-information@51ca5849e3d48b72134ca70e237980619e456c08
-      uses: xo-energy/action-octopus-build-information@v1.1.0
-      with:
-        github_token: ${{ github.token }}
-        octopus_api_key: ${{ secrets.OCTOPUS_API_KEY }}
-        octopus_server: ${{ secrets.OCTOPUS_URL }}
-        octopus_space: ${{ env.OCTOPUS_SPACE_NAME }}
-        push_overwrite_mode: OverwriteExisting
-        push_package_ids: ${{ env.PACKAGE_NAME }}
-        push_version: 1.0.${{ github.RUN_NUMBER }}
-
-    - name: Handoff to Octopus Deploy
-      id: step_four
+    - name: Push Build Information
       env:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
@@ -159,8 +127,20 @@ jobs:
 
         New-Item "buildinformation.json" -ItemType File
         Set-Content -Path "buildinformation.json" -Value $jsonBody
-
-        #octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
-        #octo create-release --project="${{ env.OCTOPUS_PROJECT_NAME }}" --packageVersion="1.0.${{ github.RUN_NUMBER }}" --releaseNumber="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}" --deployTo="${{ env.ENVIRONMENT }}" --channel="${{ env.CHANNEL }}" --variable="Feature Branch Name:${{ env.BRANCH_NAME }}" --variable="Merged Branch Name:${{ env.MERGED_BRANCH }}"
+        octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="1.0.${{ github.RUN_NUMBER }}" --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
+     
       shell: pwsh
+      
+    - name: Create Release in Octopus Deploy
+      uses: OctopusDeploy/create-release-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+        channel: ${{ env.CHANNEL }}
+        deploy_to: ${{ env.ENVIRONMENT }}
+        log_level: verbose
+        package_version: 1.0.${{ github.RUN_NUMBER }}
+        project: ${{ env.OCTOPUS_PROJECT_NAME }}
+        release_number: 1.0.${{ github.RUN_NUMBER }}
+        server: ${{ secrets.OCTOPUS_URL }}
+        space: ${{ env.OCTOPUS_SPACE_NAME }}
     
