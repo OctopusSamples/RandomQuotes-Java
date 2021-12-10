@@ -4,6 +4,7 @@ on:
   push:
     branches: 
       - master
+      - test
 env:  
   PACKAGES_FOLDER: Modules
   OUTPUT_FOLDER: PackagesOutput
@@ -35,7 +36,7 @@ jobs:
 
         if ($branchName -ne "master")
         {
-           $versionNumber = "0.0.${{env.GITHUB_RUN_NUMBER}}"
+           $versionNumber = "0.0.${{ github.RUN_NUMBER }}"
            $channelName = "Feature Branches"
            $deployEnvironment = "Test"           
         }
@@ -55,9 +56,10 @@ jobs:
         OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
       run: |
-        mvn versions:set -DnewVersion=1.0.${{ github.RUN_NUMBER }}
+        mvn versions:set -newVersion=1.0.${{ github.RUN_NUMBER }}
         mvn clean test package -Pwar
         cd target
+        ls
         Rename-Item -Path "${{ env.PACKAGE_NAME }}.1.war" -NewName "${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }} .war"
       shell: pwsh
       
@@ -72,7 +74,7 @@ jobs:
         api_key: ${{ secrets.OCTOPUS_API_KEY }}
         log_level: verbose
         overwrite_mode: OverwriteExisting
-        packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }} }.war
+        packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
 
