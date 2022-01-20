@@ -1,168 +1,136 @@
-name: Java CI
-
-on:
-  push:
-  workflow_dispatch:
+# The following workflow provides an opinionated template you can customize for your own needs.
+#
+# To configure Octopus, set the OCTOPUS_API_TOKEN secret to the Octopus API key, and
+# set the OCTOPUS_SERVER_URL secret to the Octopus URL.
+#
+# Double check the "project" and "deploy_to" properties in the "Create Octopus Release" step
+# match your Octopus projects and environments.
+#
+# Get a trial Octopus instance from https://octopus.com/start
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v1
-
-    - uses: nelonoel/branch-name@v1.0.1
-
-    - name: Set up JDK 1.11
+      with:
+        fetch-depth: '0'
+    - name: Install GitVersion
+      uses: gittools/actions/gitversion/setup@v0.9.7
+      with:
+        versionSpec: 5.x
+    - id: determine_version
+      name: Determine Version
+      uses: gittools/actions/gitversion/execute@v0.9.7
+      with:
+        additionalArguments: /overrideconfig mode=Mainline
+    - name: Install Octopus Deploy CLI
+      uses: OctopusDeploy/install-octocli@v1.1.1
+      with:
+        version: latest
+    - name: Set up JDK 1.17
       uses: actions/setup-java@v2
       with:
-        java-version: '11'
-        distribution: 'adopt'
-
-    - name: Install Octopus Deploy CLI
-      uses: OctopusDeploy/install-octocli@v1
+        java-version: '17'
+        distribution: adopt
+    - name: List Dependencies
+      run: gradle dependencies --console=plain > dependencies.txt
+      shell: bash
+    - name: Collect Dependencies
+      uses: actions/upload-artifact@v2
       with:
-        version: 7.4.3124
-
-    - name: Update version
-      run: mvn versions:set -DnewVersion=0.1.${{ github.run_number }}
-
-    - name: List dependencies
-      run: mvn --batch-mode dependency:tree --no-transfer-progress
-
-    - name: Build with Maven
-      run: mvn --batch-mode package --file pom.xml -DfinalName=app
-
-    - name: Create Release
+        name: Dependencies
+        path: dependencies.txt
+    - name: Test
+      run: gradle check --console=plain || true
+      shell: bash
+    - if: always()
+      name: Report
+      uses: dorny/test-reporter@v1
+      with:
+        name: Gradle Tests
+        path: build/test-results/**/*.xml
+        reporter: java-junit
+        fail-on-error: 'false'
+    - name: Package
+      run: gradle clean assemble --console=plain
+      shell: bash
+    - id: get_artifact
+      name: Get Artifact Path
+      run: |-
+        # Find the largest WAR or JAR, and assume that was what we intended to build.
+        echo "::set-output name=artifact::$(find target -type f \( -iname \*.jar -o -iname \*.war \) -printf "%p\n" | sort -n | head -1)"
+      shell: bash
+    - id: get_artifact_name
+      name: Get Artifact Name
+      run: |-
+        # Get the filename without a path
+        path="${{ steps.get_artifact.outputs.artifact }}"
+        echo "::set-output name=artifact::${path##*/}"
+      shell: bash
+    - name: Tag Release
+      uses: mathieudutour/github-tag-action@v6.0
+      with:
+        custom_tag: ${{ steps.determine_version.outputs.semVer }}
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+    - env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       id: create_release
+      name: Create Release
       uses: actions/create-release@v1
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
-        tag_name: 0.1.${{ github.run_number }}
-        release_name: Release 0.1.${{ github.run_number }}
-        draft: false
-        prerelease: false
-
-    - name: Upload Release Asset
-      id: upload-release-asset
-      uses: actions/upload-release-asset@v1
-      env:
+        tag_name: ${{ steps.determine_version.outputs.semVer }}+run${{ github.run_number }}-attempt${{ github.run_attempt }}
+        release_name: Release ${{ steps.determine_version.outputs.semVer }} Run ${{ github.run_number }} Attempt ${{ github.run_attempt }}
+        draft: 'false'
+        prerelease: 'false'
+    - env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      name: Upload Release Asset
+      uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: target/app.jar
-        asset_name: app.0.1.${{ github.run_number }}.jar
-        asset_content_type: application/zip
-
-    - name: Login to DockerHub
-      uses: docker/login-action@v1
+        asset_path: ${{ steps.get_artifact.outputs.artifact }}
+        asset_name: ${{ steps.get_artifact_name.outputs.artifact }}
+        asset_content_type: application/octet-stream
+    - id: get_octopus_artifact
+      name: Create Octopus Artifact
+      run: |
+        # Octopus expects artifacts to have a specific file format
+        file="${{ steps.get_artifact.outputs.artifact }}"
+        extension="${file##*.}"
+        octofile="RandomQuotes-Java.${{ steps.determine_version.outputs.semVer }}.${extension}"
+        cp ${file} ${octofile}
+        echo "::set-output name=artifact::${octofile}"
+        # The version used when creating a release is the package id, colon, and version
+        octoversion="RandomQuotes-Java:${{ steps.determine_version.outputs.semVer }}"
+        echo "::set-output name=octoversion::${octoversion}"
+      shell: bash
+    - name: Push to Octopus
+      uses: OctopusDeploy/push-package-action@v1.1.1
       with:
-        username: ${{ secrets.DOCKER_USERNAME }}
-        password: ${{ secrets.DOCKER_PASSWORD }}
-
-    - name: Main build and push
-      if: github.ref == 'refs/heads/master'
-      uses: docker/build-push-action@v2
+        api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
+        packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
+        server: ${{ secrets.OCTOPUS_SERVER_URL }}
+        overwrite_mode: OverwriteExisting
+    - name: Generate Octopus Deploy build information
+      uses: xo-energy/action-octopus-build-information@v1.1.2
       with:
-        push: true
-        build-args: VERSION=0.1.${{ github.run_number }}
-        tags: octopussamples/randomquotesjava:0.1.${{ github.run_number }}
-
-    - name: Main build Docker build info
-      if: github.ref == 'refs/heads/master'
-      run: >-
-        echo "{
-        \"PackageId\": \"octopussamples/randomquotesjava\",
-        \"Version\": \"0.1.${{ github.run_number }}\",
-        \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
-        \"BuildNumber\": \"${{ github.run_number }}\",
-        \"Branch\": \"${{ github.ref }}\",
-        \"BuildEnvironment\":\"GitHub\",
-        \"VcsCommitNumber\":\"${{ github.sha }}\",
-        \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
-        \"VcsType\": \"Git\",
-        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\",
-        \"CommentParser\": \"GitHub\",
-        \"Commits\":
-        [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
-        }" > dockerbuildinfo.json; cat dockerbuildinfo.json
-
-    - name: Main push build Info
-      if: github.ref == 'refs/heads/master'
-      run: >-
-        octo build-information
-        "--space=${{ secrets.OCTOPUS_SERVER_SPACE }}"
-        --server=${{ secrets.OCTOPUS_SERVER_URL }}
-        --apiKey=${{ secrets.OCTOPUS_API_KEY }}
-        --package-id=octopussamples/randomquotesjava
-        --version=0.1.${{ github.run_number }}
-        --file=dockerbuildinfo.json
-
-    - name: Branch build and push
-      if: github.ref != 'refs/heads/master'
-      uses: docker/build-push-action@v2
+        octopus_api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
+        octopus_project: RandomQuotes-Java
+        octopus_server: ${{ secrets.OCTOPUS_SERVER_URL }}
+        push_version: ${{ steps.determine_version.outputs.semVer }}
+        push_package_ids: RandomQuotes-Java
+        push_overwrite_mode: OverwriteExisting
+        output_path: octopus
+    - name: Create Octopus Release
+      uses: OctopusDeploy/create-release-action@v1.1.1
       with:
-        push: true
-        build-args: VERSION=0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
-        tags: octopussamples/randomquotesjava:0.1.${{ github.run_number }}-${{ env.BRANCH_NAME }}
-
-    - name: Main push to Maven
-      if: github.ref == 'refs/heads/master'
-      run: >-
-        mvn --batch-mode deploy:deploy-file
-        -DgroupId=com.octopus
-        -DartifactId=randomquotes
-        -Dversion=0.1.${{ github.run_number }}
-        -Dpackaging=jar
-        -Dfile=target/app.jar
-        -DrepositoryId=github
-        -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Branch push to Maven
-      if: github.ref != 'refs/heads/master'
-      run: >-
-        mvn --batch-mode deploy:deploy-file
-        -DgroupId=com.octopus
-        -DartifactId=randomquotes
-        -Dversion=0.1.${{ github.run_number }}-${BRANCH_NAME}
-        -Dpackaging=jar
-        -Dfile=target/app.jar
-        -DrepositoryId=github
-        -Durl=https://maven.pkg.github.com/OctopusSamples/RandomQuotes-Java
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    - name: Branch build Docker build info
-      if: github.ref != 'refs/heads/master'
-      run: >-
-        echo "{
-        \"PackageId\": \"octopussamples/randomquotesjava\",
-        \"Version\": \"0.1.${{ github.run_number }}-${BRANCH_NAME}\",
-        \"BuildUrl\": \"https://github.com/${{github.repository}}/actions/runs/${{github.run_id}}\",
-        \"BuildNumber\": \"${{ github.run_number }}\",
-        \"Branch\": \"${{ github.ref }}\",
-        \"BuildEnvironment\":\"GitHub\",
-        \"VcsCommitNumber\":\"${{ github.sha }}\",
-        \"VcsCommitUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\",
-        \"VcsType\": \"Git\",
-        \"VcsRoot\": \"https://github.com/OctopusSamples/RandomQuotes-Java\",
-        \"CommentParser\": \"GitHub\",
-        \"Commits\":
-        [{\"Id\":\"${{ github.sha }}\", \"LinkUrl\":\"https://github.com/OctopusSamples/RandomQuotes-Java/commit/${{ github.sha }}\", \"Comment\": \"${{ github.event.head_commit.message }}\"}]
-        }" > dockerbuildinfo.json; cat dockerbuildinfo.json
-
-    - name: Branch Push Build Info
-      if: github.ref != 'refs/heads/master'
-      run: >-
-        octo build-information
-        "--space=${{ secrets.OCTOPUS_SERVER_SPACE }}"
-        --server=${{ secrets.OCTOPUS_SERVER_URL }}
-        --apiKey=${{ secrets.OCTOPUS_API_KEY }}
-        --package-id=octopussamples/randomquotesjava
-        --version=0.1.${{ github.run_number }}-${BRANCH_NAME}
-        --file=dockerbuildinfo.json
-
+        api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
+        project: RandomQuotes-Java
+        server: ${{ secrets.OCTOPUS_SERVER_URL }}
+        deploy_to: Development
+        packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
+name: Java Gradle Build
+'on':
+  workflow_dispatch: {}
+  push: {}
