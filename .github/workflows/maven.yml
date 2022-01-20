@@ -59,7 +59,7 @@ jobs:
       name: Get Artifact Path
       run: |-
         # Find the largest WAR or JAR, and assume that was what we intended to build.
-        echo "::set-output name=artifact::$(find target -type f \( -iname \*.jar -o -iname \*.war \) -printf "%p\n" | sort -n | head -1)"
+        echo "::set-output name=artifact::$(find build -type f \( -iname \*.jar -o -iname \*.war \) -printf "%p\n" | sort -n | head -1)"
       shell: bash
     - id: get_artifact_name
       name: Get Artifact Name
