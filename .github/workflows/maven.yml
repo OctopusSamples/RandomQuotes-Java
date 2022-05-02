@@ -93,7 +93,7 @@ jobs:
         tag_name: ${{ steps.determine_version.outputs.semVer }}+run${{ github.run_number }}-attempt${{ github.run_attempt }}
         release_name: Release ${{ steps.determine_version.outputs.semVer }} Run ${{ github.run_number }} Attempt ${{ github.run_attempt }}
         draft: 'false'
-        prerelease: 'false'
+        prerelease: 'false'  
     - env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       name: Upload Release Asset
@@ -103,6 +103,22 @@ jobs:
         asset_path: ${{ steps.get_artifact.outputs.artifact }}
         asset_name: ${{ steps.get_artifact_name.outputs.artifact }}
         asset_content_type: application/octet-stream
+        
+    # The war file is useful for testing deployments, so build and save that 
+    - name: Package the war file
+      run: ./mvnw --batch-mode -DskipTests=true -Pwar package
+      shell: bash    
+    
+    - env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      name: Upload War file
+      uses: actions/upload-release-asset@v1
+      with:
+        upload_url: ${{ steps.create_release.outputs.upload_url }}
+        asset_path: target/randomquotes.0.1.9.war
+        asset_name: randomquotes.0.1.9.war
+        asset_content_type: application/octet-stream
+        
     - id: get_octopus_artifact
       name: Create Octopus Artifact
       run: |-
