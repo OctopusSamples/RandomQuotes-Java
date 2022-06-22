@@ -64,9 +64,9 @@ jobs:
           name: "check files"
           command: "ls -R"
       - persist_to_workspace:
-          root: .
+          root: zip
           paths:
-            - "zip/CircleCIPkg.${PACKAGEVERSION}.zip"
+            - "*.zip"
   check-file:
     environment:
       PACKAGEVERSION: 1.0.<< pipeline.number >>
@@ -78,7 +78,7 @@ jobs:
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
       - attach_workspace:
-          at: ./
+          at: zip
       - run:
           name: "check files"
           command: "ls -R"
@@ -91,7 +91,7 @@ jobs:
     steps:
       - octo/install-tools
       - attach_workspace:
-          at: ./
+          at: zip
       - octo2/push:
           id: "CircleCIPkg"
 
@@ -105,5 +105,9 @@ workflows:
   say-hello-workflow:
     jobs:
       - create-file
-      - check-file
-      - push-file
+      - check-file:
+          requires:
+            - create-file
+      - push-file:
+          requires:
+            - create-file
