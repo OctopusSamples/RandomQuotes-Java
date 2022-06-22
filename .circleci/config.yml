@@ -52,6 +52,9 @@ jobs:
     steps:
       - checkout
       - run:
+          name: "Install Zip"
+          command: "apt-get install zip unzip"
+      - run:
           name: "Make Folder"
           command: "mkdir files"          
       - run:
@@ -60,6 +63,7 @@ jobs:
       - run:
           name: "Create Zip"
           command: "zip -r CircleCIPkg.$PACKAGEVERSION.zip files"
+
 
 
 
