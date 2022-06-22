@@ -2,6 +2,41 @@
 # See: https://circleci.com/docs/2.0/configuration-reference
 version: 2.1
 
+orbs:
+  #cake: octopus-samples/cake@0.0.1
+  octo: octopusdeploylabs/octopus-cli@0.0.3
+  octo2:
+    orbs:
+      octo: octopusdeploylabs/octopus-cli@0.0.3
+    commands:
+      pack:
+        parameters:
+          id:
+            type: string 
+        steps:
+          - octo/pack:
+              id: "<< parameters.id >>"
+              version: $PACKAGEVERSION
+              base_path: "publish/<< parameters.id >>"
+              out_folder: "package"
+      push:
+        parameters:
+          id:
+            type: string
+        steps:
+          - octo/push:
+              package: "package/<< parameters.id >>.${PACKAGEVERSION}.zip"
+              server: "OCTOPUS_SERVER_URL"
+              api_key: "OCTOPUS_API_KEY"
+              space: $OCTOPUS_SPACE
+          - octo/build-information:
+              package_id: "<< parameters.id >>"
+              version: "$PACKAGEVERSION"
+              server: "OCTOPUS_SERVER_URL"
+              api_key: "OCTOPUS_API_KEY" 
+              space: $OCTOPUS_SPACE
+
+
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
@@ -20,6 +55,7 @@ jobs:
       - run:
           name: "Say Hi Ryan"
           command: "echo Hi Ryan!"
+
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
