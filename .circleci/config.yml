@@ -62,7 +62,7 @@ jobs:
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files"
+          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files;cd zip;ls"
       - persist_to_workspace:
           root: "zip"
           paths:
@@ -76,6 +76,9 @@ jobs:
       - octo/install-tools
       - attach_workspace:
           at: zip
+      - run:
+          name: "ls"
+          command: "ls"
       - octo2/push:
           id: "CircleCIPkg"
 
