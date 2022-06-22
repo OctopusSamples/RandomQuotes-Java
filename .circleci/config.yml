@@ -62,7 +62,7 @@ jobs:
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip zip;cd zip;ls"
+          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files"
       - run:
           name: "check files"
           command: "ls -R"
