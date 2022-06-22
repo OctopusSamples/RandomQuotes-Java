@@ -62,7 +62,7 @@ jobs:
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r zip/CircleCIPkg.$PACKAGEVERSION.zip files"
+          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files"
       - persist_to_workspace:
           root: "zip"
           paths:
