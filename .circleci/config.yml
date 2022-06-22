@@ -62,11 +62,11 @@ jobs:
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files;cd zip;ls"
+          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip zip;cd zip;ls"
       - persist_to_workspace:
           root: "zip"
           paths:
-            - "CircleCIPkg.${PACKAGEVERSION}.zip"
+            - "*"
   check-file:
     environment:
       PACKAGEVERSION: 1.0.<< pipeline.number >>
