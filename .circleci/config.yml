@@ -58,9 +58,6 @@ jobs:
           name: "Make Folder"
           command: "mkdir files;mkdir zip"          
       - run:
-          name: "Create File"
-          command: "touch files/blank.txt"
-      - run:
           name: "Create Zip"
           command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip src"
       - run:
@@ -95,9 +92,6 @@ jobs:
       - octo/install-tools
       - attach_workspace:
           at: zip
-      - run:
-          name: "ls"
-          command: "ls"
       - octo2/push:
           id: "CircleCIPkg"
 
