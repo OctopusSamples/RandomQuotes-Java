@@ -25,7 +25,7 @@ orbs:
             type: string
         steps:
           - octo/push:
-              package: "package/<< parameters.id >>.${PACKAGEVERSION}.zip"
+              package: "zip/<< parameters.id >>.${PACKAGEVERSION}.zip"
               server: "OCTOPUS_SERVER_URL"
               api_key: "OCTOPUS_API_KEY"
               space: $OCTOPUS_SPACE
@@ -68,19 +68,17 @@ jobs:
           paths:
             - "*"
   push-file:
+    executor:
+      name: octo/default
     environment:
       PACKAGEVERSION: 1.0.<< pipeline.number >>
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: ubuntu:22.04
     steps:
-      - checkout
+      - octo/install-tools
       - attach_workspace:
           at: zip
-      - run:
-          name: "ls"
-          command: "ls"
+      - octo2/push:
+          id: "CircleCIPkg"
+
 
 
 
