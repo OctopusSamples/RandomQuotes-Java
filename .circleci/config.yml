@@ -56,13 +56,31 @@ jobs:
           command: "apt-get update;apt-get install zip unzip"
       - run:
           name: "Make Folder"
-          command: "mkdir files"          
+          command: "mkdir files;mkdir zip"          
       - run:
           name: "Create File"
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r CircleCIPkg.$PACKAGEVERSION.zip files"
+          command: "zip -r zip/CircleCIPkg.$PACKAGEVERSION.zip files"
+      - persist_to_workspace:
+          root: "zip"
+          paths:
+            - "*"
+  push-file:
+    environment:
+      PACKAGEVERSION: 1.0.<< pipeline.number >>
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: ubuntu:22.04
+    steps:
+      - checkout
+      - attach_workspace:
+          at: zip
+      - run:
+          name: "ls"
+          command: "ls"
 
 
 
