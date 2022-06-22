@@ -62,7 +62,7 @@ jobs:
           command: "touch files/blank.txt"
       - run:
           name: "Create Zip"
-          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip files"
+          command: "zip -r zip/CircleCIPkg.${PACKAGEVERSION}.zip src"
       - run:
           name: "check files"
           command: "ls -R"
@@ -80,7 +80,6 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - checkout
       - attach_workspace:
           at: zip
       - run:
