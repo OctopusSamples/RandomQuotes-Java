@@ -40,6 +40,34 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  build-info:
+    environment:
+      PACKAGEVERSION: 1.0.<< pipeline.number >>
+    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
+    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
+    docker:
+      - image: ubuntu:22.04
+    # Add steps to the job
+    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
+    steps:
+      - checkout
+      - run:
+          name: "Install Git"
+          command: "apt-get update;apt-get install git"
+      - run:
+          name: "check log"
+          command: 'commitMessage = git log -1 --pretty=oneline;commitMessage = $commitMessage -replace "$CIRCLE_SHA1", ""; echo $commitMessage;'          
+  push-file:
+    executor:
+      name: octo/default
+    environment:
+      PACKAGEVERSION: 1.0.<< pipeline.number >>
+    steps:
+      - octo/install-tools
+      - attach_workspace:
+          at: zip
+      - octo2/push:
+          id: "CircleCIPkg"
   create-file:
     environment:
       PACKAGEVERSION: 1.0.<< pipeline.number >>
@@ -70,18 +98,6 @@ jobs:
           root: zip
           paths:
             - "*.zip"
-  push-file:
-    executor:
-      name: octo/default
-    environment:
-      PACKAGEVERSION: 1.0.<< pipeline.number >>
-    steps:
-      - octo/install-tools
-      - attach_workspace:
-          at: zip
-      - octo2/push:
-          id: "CircleCIPkg"
-
 
 
 
@@ -95,3 +111,4 @@ workflows:
       - push-file:
           requires:
             - create-file
+      - build-info
