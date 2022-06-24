@@ -3,6 +3,8 @@
 version: 2.1
 
 orbs:
+  shellcheck: circleci/shellcheck@3.1.1
+  gh: circleci/github-cli@2.0
   #cake: octopus-samples/cake@0.0.1
   octo: octopusdeploylabs/octopus-cli@0.0.3
   octo2:
@@ -50,10 +52,13 @@ jobs:
     # Add steps to the job
     # See: https://circleci.com/docs/2.0/configuration-reference/#steps
     steps:
-      - checkout
-      #- run:
-          #name: "Install Git"
-          #command: "apt-get update;apt-get install git"
+      - shellcheck/check
+      - gh/install
+      - run:
+          name: Check Scripts
+          command: |
+            commitMessage = git log -1 --pretty=oneline
+            echo $commitMessage
       - run:
           name: "check log"
           command: 'export commitMessage = git log -1 --pretty=oneline;echo $commitMessage;' #commitMessage = $commitMessage -replace "$CIRCLE_SHA1", "";          
