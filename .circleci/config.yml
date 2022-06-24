@@ -55,6 +55,9 @@ jobs:
       - shellcheck/check
       - gh/install
       - run:
+          name: install curl
+          command: "apt-get update;apt-get -y install curl;"
+      - run:
           name: Check Scripts
           command: |
             commitMessage = git log -1 --pretty=oneline
