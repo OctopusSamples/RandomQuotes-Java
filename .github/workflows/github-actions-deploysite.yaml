@@ -13,6 +13,10 @@ env:
   OCTOPUS_SPACE_NAME: JeremyM
   ENVIRONMENT: Development
   CHANNEL: Default
+  OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}   # API key used with Octopus Deploy instance
+  OCTOPUS_HOST: ${{ secrets.OCTOPUS_URL }}       # address of Octopus Deploy instance (i.e. https://demo.octopus.app)
+  OCTOPUS_SPACE: JeremyM
+
 
 jobs:
   build:
@@ -76,38 +80,15 @@ jobs:
         server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
 
-    - name: Push Build Information
-      env:
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
-        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}        
-      run: |
-        Write-Host "Building the build information"   
-        $commitMessage = git log -1 --pretty=oneline
-        $commitMessage = $commitMessage -replace "${{ github.SHA }} ", ""
-        Write-Host "Commit Message: $commitMessage"        
-
-        $jsonBody = @{
-          BuildEnvironment = "GitHub Actions"
-          Branch = "${{ github.REF_NAME }}"
-          BuildNumber = "${{ github.RUN_NUMBER }}"
-          BuildUrl = "https://github.com/${{ github.REPOSITORY }}/actions/runs/${{ github.RUN_ID }}"
-          VcsCommitNumber = "${{ github.SHA }}"
-          VcsType = "Git"
-          VcsRoot = "https://github.com/${{ github.REPOSITORY }}.git"
-          Commits = @(
-            @{
-              Id = "${{ github.SHA }}"
-              LinkUrl = "https://github.com/${{ github.REPOSITORY }}/commit/${{ github.SHA }}"
-              Comment = "$commitMessage"
-            }
-          )
-        } | ConvertTo-Json -Depth 10
-
-        New-Item "buildinformation.json" -ItemType File
-        Set-Content -Path "buildinformation.json" -Value $jsonBody
-        octo build-information --package-id="${{ env.PACKAGE_NAME }}" --file="buildinformation.json" --version="${{ env.PACKAGE_VERSION }} " --server="${{ env.OCTOPUS_URL }}" --apiKey="${{ env.OCTOPUS_API_KEY }}" --space="${{ env.OCTOPUS_SPACE_NAME }}"
-     
-      shell: pwsh
+    - name: Push Build Information to Octopus Deploy
+        # You may pin to the exact commit or the version.
+        # uses: OctopusDeploy/push-build-information-action@5096721de3c3074bb3906ee25eff7339ad4cdde3
+      uses: OctopusDeploy/push-build-information-action@v1.0.1
+      with:
+          # A multi-line list of packages to push to Octopus Deploy.
+        packages: ${{ env.PACKAGE_NAME }}
+          # The version of the package(s)
+        version: ${{ env.PACKAGE_VERSION }}
       
     - name: Create Release in Octopus Deploy
       uses: OctopusDeploy/create-release-action@v1.1.1
