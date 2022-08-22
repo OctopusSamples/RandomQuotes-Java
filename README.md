@@ -1,6 +1,6 @@
 A sample Java application to display famous quotes. 
 
-#DEPLOY TEST    
+#DEPLOY TEST       
 
 Run `mvn package` to create JAR, and `mvn package -Pwar` to create WAR.
 #add branch. Issue 5 fixed?
