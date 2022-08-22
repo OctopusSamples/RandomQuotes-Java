@@ -14,7 +14,7 @@ env:
   ENVIRONMENT: Development
   CHANNEL: Default
   OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}   # API key used with Octopus Deploy instance
-  OCTOPUS_HOST: ${{ secrets.OCTOPUS_URL }}       # address of Octopus Deploy instance (i.e. https://demo.octopus.app)
+  OCTOPUS_HOST: ${{ secrets.OCTOPUS_URL }}       # address of Octopus Deploy instance (i.e. https://demo.octopus.app) 
   OCTOPUS_SPACE: JeremyM
 
 
