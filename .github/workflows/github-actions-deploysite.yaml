@@ -66,18 +66,18 @@ jobs:
       shell: pwsh
       
     - name: Install Octopus CLI
-      uses: OctopusDeploy/install-octopus-cli-action@v1.1.1
+      uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
       with:
         version: latest
       
     - name: Push Package to Octopus Deploy
-      uses: OctopusDeploy/push-package-action@v1.1.1
+      uses: OctopusDeploy/push-package-action@v2.1.0
       with:
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+        #api_key: ${{ secrets.OCTOPUS_API_KEY }}
         log_level: verbose
         overwrite_mode: OverwriteExisting
         packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war
-        server: ${{ secrets.OCTOPUS_URL }}
+        #server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
 
     - name: Push Build Information to Octopus Deploy
@@ -91,15 +91,29 @@ jobs:
         version: ${{ env.PACKAGE_VERSION }}
       
     - name: Create Release in Octopus Deploy
-      uses: OctopusDeploy/create-release-action@v1.1.1
+      uses: OctopusDeploy/create-release-action@v2.0.1
       with:
-        api_key: ${{ secrets.OCTOPUS_API_KEY }}
+        #api_key: ${{ secrets.OCTOPUS_API_KEY }}
         channel: ${{ env.CHANNEL_NAME }}
         deploy_to: ${{ env.ENVIRONMENT_NAME }}
         log_level: verbose
         package_version: ${{ env.PACKAGE_VERSION }} 
         project: ${{ env.OCTOPUS_PROJECT_NAME }}
         release_number: ${{ env.PACKAGE_VERSION }} 
-        server: ${{ secrets.OCTOPUS_URL }}
+        #server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
-    
+        
+    - name: Run Runbook in Octopus Deploy
+      # You may pin to the exact commit or the version.
+      # uses: OctopusDeploy/run-runbook-action@dc576c7ad9f6df07bdabafbff90c9536a4b547ac
+      uses: OctopusDeploy/run-runbook-action@v2.0.1
+      with:
+        # The name or ID of the project associated with this runbook.
+        project: ${{ env.OCTOPUS_PROJECT_NAME }}
+        # The name or ID of the runbook. If the name is supplied, the project input value must also be specified.
+        runbook: GHARunbook
+        # A comma-delimited list of environments in Octopus Deploy in which to run (i.e. "Dev,Test,Prod").
+        environments: Development
+        # The name or ID of a space within which this command will be executed. If omitted, the default space will be used.
+        space: ${{ env.OCTOPUS_SPACE_NAME }}
+
