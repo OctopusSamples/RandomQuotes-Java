@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="9a09451f-59f1-4c52-8745-996ca7b999f9" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
-  <name>RandomQuotes Java</name>
-  <parameters />
-  <cleanup />
-</project>
-
