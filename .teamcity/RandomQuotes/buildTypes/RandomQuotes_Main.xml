@@ -67,7 +67,7 @@
       </runner>
     </build-runners>
     <vcs-settings>
-      <vcs-entry-ref root-id="HttpsGithubComMillerjn21RandomQuotesJava" />
+      <vcs-entry-ref root-id="RandomQuotes_HttpsGithubComMillerjn21RandomQuotesJava" />
     </vcs-settings>
     <requirements />
     <build-triggers />
