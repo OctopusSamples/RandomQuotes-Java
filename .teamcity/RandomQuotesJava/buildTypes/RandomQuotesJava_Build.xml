@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="599f9b99-0485-403b-b4cd-94c01368db80" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2021.1/project-config.xsd">
+  <name>Build</name>
+  <description />
+  <settings>
+    <parameters />
+    <build-runners />
+    <vcs-settings>
+      <vcs-entry-ref root-id="RandomQuotesJava_HttpsGithubComMillerjn21RandomQuotesJavaRefsHeadsMaster" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers>
+      <build-trigger id="TRIGGER_1" type="vcsTrigger">
+        <parameters>
+          <param name="branchFilter" value="+:*" />
+          <param name="enableQueueOptimization" value="true" />
+          <param name="quietPeriodMode" value="DO_NOT_USE" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <cleanup />
+  </settings>
+</build-type>
+
