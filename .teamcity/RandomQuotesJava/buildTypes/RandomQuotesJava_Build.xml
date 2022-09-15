@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<build-type xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" uuid="e30e070f-8570-45e0-b576-f7a8d595551b" xsi:noNamespaceSchemaLocation="https://www.jetbrains.com/teamcity/schemas/2020.1/project-config.xsd">
+  <name>Build</name>
+  <description />
+  <settings>
+    <parameters />
+    <build-runners>
+      <runner id="RUNNER_7" name="Maven" type="Maven2">
+        <parameters>
+          <param name="goals" value="versions:set -DnewVersion=1.0.%build.counter%" />
+          <param name="localRepoScope" value="agent" />
+          <param name="maven.path" value="%teamcity.tool.maven.DEFAULT%" />
+          <param name="pomLocation" value="pom.xml" />
+          <param name="teamcity.coverage.emma.include.source" value="true" />
+          <param name="teamcity.coverage.emma.instr.parameters" value="-ix -*Test*" />
+          <param name="teamcity.coverage.idea.includePatterns" value="*" />
+          <param name="teamcity.coverage.jacoco.patterns" value="+:*" />
+          <param name="teamcity.step.mode" value="default" />
+          <param name="teamcity.tool.jacoco" value="%teamcity.tool.jacoco.DEFAULT%" />
+          <param name="userSettingsSelection" value="userSettingsSelection:default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_8" name="" type="Maven2">
+        <parameters>
+          <param name="goals" value="clean test package -Pwar" />
+          <param name="localRepoScope" value="agent" />
+          <param name="maven.path" value="%teamcity.tool.maven.DEFAULT%" />
+          <param name="pomLocation" value="pom.xml" />
+          <param name="teamcity.coverage.emma.include.source" value="true" />
+          <param name="teamcity.coverage.emma.instr.parameters" value="-ix -*Test*" />
+          <param name="teamcity.coverage.idea.includePatterns" value="*" />
+          <param name="teamcity.coverage.jacoco.patterns" value="+:*" />
+          <param name="teamcity.step.mode" value="default" />
+          <param name="teamcity.tool.jacoco" value="%teamcity.tool.jacoco.DEFAULT%" />
+          <param name="userSettingsSelection" value="userSettingsSelection:default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_9" name="Octo Push" type="octopus.push.package">
+        <parameters>
+          <param name="octopus_forcepush" value="false" />
+          <param name="octopus_host" value="http://192.168.139.160" />
+          <param name="octopus_packagepaths" value="target/randomquotes.1.0.%build.counter%.war" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:69a95c6e-bb73-4d4d-ba47-40bb5a0a8c99" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_10" name="Build Info" type="octopus.metadata">
+        <parameters>
+          <param name="octopus_forcepush" value="false" />
+          <param name="octopus_host" value="http://192.168.139.160" />
+          <param name="octopus_packageid" value="randomquotes" />
+          <param name="octopus_packageversion" value="1.0.%build.counter%" />
+          <param name="octopus_verbose_logging" value="true" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:69a95c6e-bb73-4d4d-ba47-40bb5a0a8c99" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+      <runner id="RUNNER_11" name="create release" type="octopus.create.release">
+        <parameters>
+          <param name="octopus_additionalcommandlinearguments" value="--package randomquotes:1.0.%build.counter%" />
+          <param name="octopus_host" value="http://192.168.139.160" />
+          <param name="octopus_project_name" value="RandomQuotes" />
+          <param name="octopus_releasenumber" value="0.0.%build.counter%" />
+          <param name="octopus_version" value="3.0+" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:69a95c6e-bb73-4d4d-ba47-40bb5a0a8c99" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
+    </build-runners>
+    <vcs-settings>
+      <vcs-entry-ref root-id="RandomQuotesJava_HttpsGithubComMillerjn21RandomQuotesJavaRefsHeadsMaster" />
+    </vcs-settings>
+    <requirements />
+    <build-triggers>
+      <build-trigger id="vcsTrigger" type="vcsTrigger">
+        <parameters>
+          <param name="branchFilter" value="+:*" />
+          <param name="enableQueueOptimization" value="true" />
+          <param name="quietPeriodMode" value="DO_NOT_USE" />
+        </parameters>
+      </build-trigger>
+    </build-triggers>
+    <cleanup />
+  </settings>
+</build-type>
+
