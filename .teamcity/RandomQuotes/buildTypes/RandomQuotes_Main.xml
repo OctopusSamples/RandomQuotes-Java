@@ -35,6 +35,15 @@
           <param name="userSettingsSelection" value="userSettingsSelection:default" />
         </parameters>
       </runner>
+      <runner id="RUNNER_3" name="Octo Push" type="octopus.push.package">
+        <parameters>
+          <param name="octopus_forcepush" value="false" />
+          <param name="octopus_host" value="http://44.202.206.53:8080" />
+          <param name="octopus_packagepaths" value="target/randomquotes.1.0.%build.counter%.war" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:077edfaa-86eb-4980-b70c-b33c050c874c" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
     </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="HttpsGithubComMillerjn21RandomQuotesJava" />
