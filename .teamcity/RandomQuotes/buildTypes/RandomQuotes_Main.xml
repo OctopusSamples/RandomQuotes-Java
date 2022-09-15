@@ -50,7 +50,7 @@
           <param name="octopus_host" value="http://44.202.206.53:8080" />
           <param name="octopus_packageid" value="randomquotes" />
           <param name="octopus_packageversion" value="1.0.%build.counter%" />
-          <param name="secure:octopus_apikey" value="credentialsJSON:5e155df5-56a5-49f3-b61d-14a80129efa9" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:077edfaa-86eb-4980-b70c-b33c050c874c" />
           <param name="teamcity.step.mode" value="default" />
         </parameters>
       </runner>
