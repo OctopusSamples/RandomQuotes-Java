@@ -54,6 +54,17 @@
           <param name="teamcity.step.mode" value="default" />
         </parameters>
       </runner>
+      <runner id="RUNNER_5" name="create release" type="octopus.create.release">
+        <parameters>
+          <param name="octopus_additionalcommandlinearguments" value="--package randomquotes:1.0.%build.counter%" />
+          <param name="octopus_host" value="http://44.202.206.53:8080" />
+          <param name="octopus_project_name" value="RandomQuotes" />
+          <param name="octopus_releasenumber" value="1.0.%build.counter%" />
+          <param name="octopus_version" value="3.0+" />
+          <param name="secure:octopus_apikey" value="credentialsJSON:077edfaa-86eb-4980-b70c-b33c050c874c" />
+          <param name="teamcity.step.mode" value="default" />
+        </parameters>
+      </runner>
     </build-runners>
     <vcs-settings>
       <vcs-entry-ref root-id="HttpsGithubComMillerjn21RandomQuotesJava" />
