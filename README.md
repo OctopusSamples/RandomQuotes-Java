@@ -5,7 +5,7 @@ A sample Java application to display famous quotes.
 Run `mvn package` to create JAR, and `mvn package -Pwar` to create WAR.
 #add branch. Issue 5 fixed?
 
-## Configuration Files
+## Configuration Files  
 
 4 configuration files are provided:
 
