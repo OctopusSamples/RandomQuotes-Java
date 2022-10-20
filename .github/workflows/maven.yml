@@ -75,6 +75,14 @@ jobs:
       with:
         overwrite_mode: OverwriteExisting
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
+    - name: Create Octopus Release
+      uses: OctopusDeploy/create-release-action@v1.1.1
+      with:
+        api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
+        project: Random Quotes
+        server: ${{ secrets.OCTOPUS_SERVER_URL }}
+        deploy_to: Development
+        packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
 name: Java Maven Build
 'on':
   workflow_dispatch: {}
