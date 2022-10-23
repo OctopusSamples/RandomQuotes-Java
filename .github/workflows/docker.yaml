@@ -1,3 +1,7 @@
+name: Java Maven Build
+'on':
+  workflow_dispatch: {}
+  push: {}
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -59,7 +63,3 @@ jobs:
         server: ${{ secrets.OCTOPUS_SERVER_URL }}
         deploy_to: Dev
         packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
-name: Java Maven Build
-'on':
-  workflow_dispatch: {}
-  push: {}
