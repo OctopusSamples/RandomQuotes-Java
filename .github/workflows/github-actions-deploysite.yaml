@@ -116,4 +116,5 @@ jobs:
         environments: Development
         # The name or ID of a space within which this command will be executed. If omitted, the default space will be used.
         space: ${{ env.OCTOPUS_SPACE_NAME }}
+        variable: variable.one:blah,variable.two:blah2
 
