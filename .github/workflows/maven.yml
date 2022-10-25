@@ -6,12 +6,12 @@ jobs:
       with:
         fetch-depth: '0'
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
+      uses: gittools/actions/gitversion/setup@v0.9.14
       with:
         versionSpec: 5.x
     - id: determine_version
       name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.7
+      uses: gittools/actions/gitversion/execute@v0.9.14
       with:
         additionalArguments: /overrideconfig mode=Mainline
     - name: Install Octopus Deploy CLI
@@ -67,7 +67,7 @@ jobs:
         echo "::set-output name=octoversion::${octoversion}"
         ls -la
       shell: bash
-    - name: Push packages to Octopus Deploy 🐙
+    - name: Push packages to Octopus Deploy
       uses: OctopusDeploy/push-package-action@v2
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
@@ -76,7 +76,7 @@ jobs:
         overwrite_mode: OverwriteExisting
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
     - name: Create Octopus Release
-      uses: OctopusDeploy/create-release-action@v1.1.1
+      uses: OctopusDeploy/create-release-action@v1
       with:
         api_key: ${{ secrets.OCTOPUS_API_TOKEN }}
         project: Random Quotes
