@@ -81,8 +81,8 @@ jobs:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
         OCTOPUS_HOST: ${{ secrets.OCTOPUS_SERVER_URL }}
       with:
-        version: ${{ steps.get_octopus_artifact.outputs.octoversion }}
-        packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
+        version: ${{ steps.determine_version.outputs.semVer }}
+        packages: randomquotes
         overwrite_mode: OverwriteExisting
     - name: Create Octopus Release
       uses: OctopusDeploy/create-release-action@v1
