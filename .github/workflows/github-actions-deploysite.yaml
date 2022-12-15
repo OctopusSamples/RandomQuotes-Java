@@ -79,6 +79,16 @@ jobs:
         packages: ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war
         #server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
+ 
+    - name: Push a package to Octopus Deploy 🐙
+      uses: OctopusDeploy/push-package-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+        OCTOPUS_HOST: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: 'Spaces-1'
+      with:
+        packages: |
+          ${{ github.WORKSPACE }}/target/${{ env.PACKAGE_NAME }}.${{ env.PACKAGE_VERSION }}.war  
 
     - name: Push Build Information to Octopus Deploy
         # You may pin to the exact commit or the version.
