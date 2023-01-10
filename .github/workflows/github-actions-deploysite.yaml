@@ -128,5 +128,5 @@ jobs:
         space: ${{ env.OCTOPUS_SPACE_NAME }}
         variables: |
           variable.one:blah
-          variable.two:${{ env.PACKAGE_VERSION }}
+          variable.two:${{ env.PACKAGE_VERSION }}-pr
 
