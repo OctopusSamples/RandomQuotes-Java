@@ -141,8 +141,6 @@ jobs:
         runbook: GHARunbook
         # A comma-delimited list of environments in Octopus Deploy in which to run (i.e. "Dev,Test,Prod").
         environments: Development
-        variables: |
-          variable.one:blah
-          variable.two:${{ env.PACKAGE_VERSION }}-pr        
+        variables: variable.one:blah,variable.two:${{ env.PACKAGE_VERSION }}        
              
 
