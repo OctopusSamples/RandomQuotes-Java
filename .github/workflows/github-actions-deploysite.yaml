@@ -116,7 +116,7 @@ jobs:
     - name: Run Runbook in Octopus Deploy
       # You may pin to the exact commit or the version.
       # uses: OctopusDeploy/run-runbook-action@dc576c7ad9f6df07bdabafbff90c9536a4b547ac
-      uses: OctopusDeploy/run-runbook-action@v2.0.1
+      uses: OctopusDeploy/run-runbook-action@v3
       with:
         # The name or ID of the project associated with this runbook.
         project: ${{ env.OCTOPUS_PROJECT_NAME }}
