@@ -113,10 +113,27 @@ jobs:
         #server: ${{ secrets.OCTOPUS_URL }}
         space: ${{ env.OCTOPUS_SPACE_NAME }}
         
-    - name: Run Runbook in Octopus Deploy
-      # You may pin to the exact commit or the version.
-      # uses: OctopusDeploy/run-runbook-action@dc576c7ad9f6df07bdabafbff90c9536a4b547ac
+    #- name: Run Runbook in Octopus Deploy
+
+      #uses: OctopusDeploy/run-runbook-action@v2.0.1
+      #with:
+        # The name or ID of the project associated with this runbook.
+        #project: ${{ env.OCTOPUS_PROJECT_NAME }}
+        # The name or ID of the runbook. If the name is supplied, the project input value must also be specified.
+        #runbook: GHARunbook
+        # A comma-delimited list of environments in Octopus Deploy in which to run (i.e. "Dev,Test,Prod").
+        #environments: Development
+        # The name or ID of a space within which this command will be executed. If omitted, the default space will be used.
+        #space: ${{ env.OCTOPUS_SPACE_NAME }}
+        #variables: |
+          #variable.one:blah
+          #variable.two:${{ env.PACKAGE_VERSION }}-pr
+    - name: Run Runbook in Octopus Deploy (v3)         
       uses: OctopusDeploy/run-runbook-action@v3
+      env:
+        OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_URL }}
+        OCTOPUS_SPACE: 'JeremyM'
       with:
         # The name or ID of the project associated with this runbook.
         project: ${{ env.OCTOPUS_PROJECT_NAME }}
@@ -124,9 +141,8 @@ jobs:
         runbook: GHARunbook
         # A comma-delimited list of environments in Octopus Deploy in which to run (i.e. "Dev,Test,Prod").
         environments: Development
-        # The name or ID of a space within which this command will be executed. If omitted, the default space will be used.
-        space: ${{ env.OCTOPUS_SPACE_NAME }}
         variables: |
           variable.one:blah
-          variable.two:${{ env.PACKAGE_VERSION }}-pr
+          variable.two:${{ env.PACKAGE_VERSION }}-pr        
+             
 
