@@ -1,5 +1,5 @@
 plugins {
-	id("org.springframework.boot") version "2.3.3.RELEASE"
+	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.0.8.RELEASE"
 	id("java")
     id("com.liftric.octopus-deploy-plugin") version "1.5.0"
@@ -10,8 +10,8 @@ group = "com.octopus"
 version = "0.1.8"
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_1_8
-	targetCompatibility = JavaVersion.VERSION_1_8
+	sourceCompatibility = JavaVersion.VERSION_17
+	targetCompatibility = JavaVersion.VERSION_17
 }
 
 repositories {

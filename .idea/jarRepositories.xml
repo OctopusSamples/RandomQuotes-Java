@@ -29,12 +29,12 @@
     <remote-repository>
       <option name="id" value="central maven repo" />
       <option name="name" value="central maven repo https" />
-      <option name="url" value="https://repo.maven.apache.org/maven2" />
+      <option name="url" value="https://repo1.maven.org/maven2" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="central maven repo" />
       <option name="name" value="central maven repo https" />
-      <option name="url" value="https://repo1.maven.org/maven2" />
+      <option name="url" value="https://repo.maven.apache.org/maven2" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="github" />
