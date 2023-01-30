@@ -19,12 +19,12 @@ jobs:
         username: ${{ secrets.DOCKERHUB_SAMPLES_USERNAME }}
         password: ${{ secrets.DOCKERHUB_SAMPLES_PASSWORD }}
     - name: Install GitVersion
-      uses: gittools/actions/gitversion/setup@v0.9.7
+      uses: gittools/actions/gitversion/setup@v0.9.14
       with:
         versionSpec: 5.x
     - id: determine_version
       name: Determine Version
-      uses: gittools/actions/gitversion/execute@v0.9.7
+      uses: gittools/actions/gitversion/execute@v0.9.14
       with:
         additionalArguments: /overrideconfig mode=Mainline
     - name: Install Octopus Deploy CLI
@@ -36,9 +36,6 @@ jobs:
       with:
         java-version: '17'
         distribution: adopt
-    - name: Set Version
-      run: ./mvnw --batch-mode versions:set -DnewVersion=${{ steps.determine_version.outputs.semVer }}
-      shell: bash
     - name: Test
       run: ./mvnw --batch-mode test
       shell: bash
@@ -54,7 +51,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: octopussamples/randomquotesjava:latest
+        tags: octopussamples/randomquotesjava:${{ steps.determine_version.outputs.semVer }}
     - name: Create Octopus Release
       uses: OctopusDeploy/create-release-action@v1.1.1
       with:
@@ -62,4 +59,4 @@ jobs:
         project: Random Quotes
         server: ${{ secrets.OCTOPUS_SERVER_URL }}
         deploy_to: Dev
-        packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
+        packages: Deploy container to Kubernetes:randomquotes:${{ steps.determine_version.outputs.semVer }}
