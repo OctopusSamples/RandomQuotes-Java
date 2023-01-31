@@ -23,7 +23,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.flywaydb:flyway-core")
 	implementation("org.postgresql:postgresql")
-	implementation("com.h2database:h2:1.4.199")
+	implementation("com.h2database:h2:2.1.214")
 	implementation("com.google.guava:guava:28.1-jre")
 	implementation("org.apache.commons:commons-lang3:3.9")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
