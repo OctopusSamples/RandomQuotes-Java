@@ -53,7 +53,7 @@ jobs:
     - name: Push Build Information to Octopus Deploy
         # You may pin to the exact commit or the version.
         # uses: OctopusDeploy/push-build-information-action@5096721de3c3074bb3906ee25eff7339ad4cdde3
-      uses: OctopusDeploy/push-build-information-action@v1.0.1
+      uses: OctopusDeploy/push-build-information-action@v3.0.1
       with:
           # A multi-line list of packages to push to Octopus Deploy.
         packages: ${{ env.PACKAGE_NAME }}
