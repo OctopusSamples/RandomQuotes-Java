@@ -2,6 +2,8 @@ name: Step-One
 on: 
   pull_request:
     branches: [master]
+    types:
+      - closed
 jobs:
   Explore-GitHub-Actions:
     runs-on: ubuntu-latest
