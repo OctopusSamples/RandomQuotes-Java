@@ -1,0 +1,63 @@
+name: Step-Two
+
+on:
+  workflow_run:
+    workflows: [Step-One]
+    branches: [master]
+    types: [completed]
+env:  
+  PACKAGES_FOLDER: Modules
+  OUTPUT_FOLDER: PackagesOutput
+  PACKAGE_NAME: TestingPullRequestBI
+  OCTOPUS_PROJECT_NAME: RandomQuotes  
+  OCTOPUS_SPACE_NAME: JeremyM
+  ENVIRONMENT: Development
+  CHANNEL: Default
+  OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_KEY }}   # API key used with Octopus Deploy instance
+  OCTOPUS_HOST: ${{ secrets.OCTOPUS_URL }}       # address of Octopus Deploy instance (i.e. https://demo.octopus.app)     
+  OCTOPUS_SPACE: 'Spaces-83'
+
+jobs:
+  build:
+    name: Build and Push Website
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2    
+    - name: Set environment variables
+      run: |
+        $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
+        Write-Host "Branch name: $branchName"  
+        $defaultVersionPrefix = "1.0"
+        $versionNumber = "$defaultVersionPrefix.${{ github.RUN_NUMBER }}"
+        $channelName = "Default"
+        $deployEnvironment = "Development"
+        $commitMessage = git log -1 --pretty=oneline
+        Write-Host "The commit message is: $commitMessage"
+        if ($branchName -ne "master")
+        {
+           $versionNumber = "0.0.${{ github.RUN_NUMBER }}"
+           $channelName = "Feature Branches"
+           $deployEnvironment = "Test"           
+        }
+        Write-Host "Setting environment variable PACKAGE_VERSION to: $versionNumber"
+        Write-Host "Setting environment variable BRANCH_NAME to: $branchName"
+        Write-Host "Setting environment variable CHANNEL_NAME to: $channelName"
+        Write-Host "Setting environment variable ENVIRONMENT_NAME to: $deployEnvironment"
+        echo "BRANCH_NAME=$branchName" | Out-File -FilePath $env:GITHUB_ENV  -Append
+        echo "PACKAGE_VERSION=$versionNumber" | Out-File -FilePath $env:GITHUB_ENV  -Append
+        echo "CHANNEL_NAME=$channelName" | Out-File -FilePath $env:GITHUB_ENV  -Append
+        echo "ENVIRONMENT_NAME=$deployEnvironment" | Out-File -FilePath $env:GITHUB_ENV  -Append
+      shell: pwsh
+      
+    - name: Push Build Information to Octopus Deploy
+        # You may pin to the exact commit or the version.
+        # uses: OctopusDeploy/push-build-information-action@5096721de3c3074bb3906ee25eff7339ad4cdde3
+      uses: OctopusDeploy/push-build-information-action@v1.0.1
+      with:
+          # A multi-line list of packages to push to Octopus Deploy.
+        packages: ${{ env.PACKAGE_NAME }}
+          # The version of the package(s)
+        version: ${{ env.PACKAGE_VERSION }}      
+      
+      
