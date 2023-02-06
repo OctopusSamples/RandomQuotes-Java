@@ -58,11 +58,23 @@ jobs:
     - name: Push Build Information to Octopus Deploy
         # You may pin to the exact commit or the version.
         # uses: OctopusDeploy/push-build-information-action@5096721de3c3074bb3906ee25eff7339ad4cdde3
-      uses: OctopusDeploy/push-build-information-action@v3.0.1
+      uses: OctopusDeploy/push-build-information-action@v3.0.3
       with:
           # A multi-line list of packages to push to Octopus Deploy.
         packages: ${{ env.PACKAGE_NAME }}
           # The version of the package(s)
         version: ${{ env.PACKAGE_VERSION }}      
-      
-      
+    - name: Deploy a Release in Octopus Deploy
+  # You may pin to the exact commit or the version.
+  # uses: OctopusDeploy/deploy-release-action@0cd4145392e49004bd34f4dd6af013d73f374761
+      uses: OctopusDeploy/deploy-release-action@v3.0.1
+      with: 
+          # The name of the project associated with this release.
+          project: aaaaStuff
+          # The number for the release to deploy.
+          release_number: 1.0.5000
+          # A multi-line list of environments to deploy to.
+          environments: Development
+
+
+
