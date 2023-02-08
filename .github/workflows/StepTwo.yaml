@@ -1,14 +1,20 @@
 name: Step-Two
       
-on:  
-  workflow_run:
-    workflows: [Step-One]
-    branches: [master]
-    types: [completed]
+#on:  
+#  workflow_run:
+#    workflows: [Step-One]
+#    branches: [master]
+#    types: [completed]
 #on:
 #  push:
 #    branches:
 #    - master
+on: 
+  pull_request:
+    branches: [master]
+#    types:
+#      - closed
+
 env:  
   PACKAGES_FOLDER: Modules
   OUTPUT_FOLDER: PackagesOutput
