@@ -78,7 +78,7 @@ jobs:
     - name: "🤩 GitHub Environment Variables Action"
       uses: FranzDiebold/github-env-vars-action@v2
     - name: "🐙 Install Octopus CLI"
-      uses: OctopusDeploy/install-octopus-cli-action@v3
+      uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
       with:
         version: latest
     - name: "📝 Create Build Info File"
