@@ -150,7 +150,7 @@ jobs:
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
-        OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
+        OCTOPUS_SPACE: Default
       with:
         project: SampleMavenProject-SpringBoot
         packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
