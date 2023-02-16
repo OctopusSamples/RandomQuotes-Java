@@ -1,14 +1,14 @@
 name: Step-Two
       
-#on:  
-#  workflow_run:
-#    workflows: [Step-One]
-#    branches: [master]
-#    types: [completed]
-on:
-  push:
-    branches:
-    - master
+on:  
+  workflow_run:
+    workflows: [Step-One]
+    branches: [master]
+    types: [completed]
+#on:
+#  push:
+#    branches:
+#    - master
 
 #on: 
 #  pull_request:
@@ -78,7 +78,7 @@ jobs:
     - name: "🤩 GitHub Environment Variables Action"
       uses: FranzDiebold/github-env-vars-action@v2
     - name: "🐙 Install Octopus CLI"
-      uses: OctopusDeploy/install-octopus-cli-action@v3
+      uses: OctopusDeploy/install-octopus-cli-action@v1.2.0
       with:
         version: latest
     - name: "📝 Create Build Info File"
@@ -99,7 +99,7 @@ jobs:
         }
         $BuildInfo
         New-Item -Name "buildInfo.json" -ItemType File -Value $($BuildInfo | ConvertTo-Json -Depth 10) -Force
-        octopus build-information --package-id="${{ env.PACKAGE_NAME }}2" --version=${{ env.PACKAGE_VERSION }} --file="buildInfo.json" --server $ENV:OCTOPUS_URL --apiKey $ENV:OCTOPUS_API_KEY --overwrite-mode=OverwriteExisting
+        octo build-information --package-id="${{ env.PACKAGE_NAME }}2" --version=${{ env.PACKAGE_VERSION }} --file="buildInfo.json" --server $ENV:OCTOPUS_URL --apiKey $ENV:OCTOPUS_API_KEY --space $ENV:OCTOPUS_SPACE --overwrite-mode=OverwriteExisting
       shell: pwsh
         
 
