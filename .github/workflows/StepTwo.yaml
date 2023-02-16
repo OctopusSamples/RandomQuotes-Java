@@ -100,6 +100,7 @@ jobs:
         $BuildInfo
         New-Item -Name "buildInfo.json" -ItemType File -Value $($BuildInfo | ConvertTo-Json -Depth 10) -Force
         octo build-information --package-id="${{ env.PACKAGE_NAME }}2" --version=${{ env.PACKAGE_VERSION }} --file="buildInfo.json" --server $ENV:OCTOPUS_URL --apiKey $ENV:OCTOPUS_API_KEY --overwrite-mode=OverwriteExisting
+      shell: pwsh
         
 
 
