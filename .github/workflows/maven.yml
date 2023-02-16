@@ -130,7 +130,7 @@ jobs:
       uses: OctopusDeploy/push-package-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
-        OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
+        OCTOPUS_URL: https://mattc.octopus.app
         OCTOPUS_SPACE: Test
       with:
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
