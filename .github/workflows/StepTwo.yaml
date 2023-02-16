@@ -5,13 +5,15 @@ name: Step-Two
 #    workflows: [Step-One]
 #    branches: [master]
 #    types: [completed]
-#on:
-#  push:
-#    branches:
-#    - master
-on: 
-  pull_request:
-    branches: [master]
+on:
+  push:
+    branches:
+    - master
+
+#on: 
+#  pull_request:
+#    branches: [master]
+
 #    types:
 #      - closed
 
@@ -34,7 +36,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2    
+    - uses: actions/checkout@v3  
     - name: Set environment variables
       run: |
         $branchName = ((${env:GITHUB_REF} -replace "refs/heads/", "") -replace "feature/", "") -replace "bugfix/", ""
@@ -81,6 +83,34 @@ jobs:
           release_number: 1.0.5000
           # A multi-line list of environments to deploy to.
           environments: Development
+
+
+    - name: "🤩 GitHub Environment Variables Action"
+      uses: FranzDiebold/github-env-vars-action@v2
+    - name: "🐙 Install Octopus CLI"
+      uses: OctopusDeploy/install-octopus-cli-action@v3
+      with:
+        version: latest
+    - name: "📝 Create Build Info File"
+      run: |
+        $Commits = [PSCustomObject]@{
+            Id = $ENV:GITHUB_SHA;
+            Comment = (git log --format=%B --no-merges -n 1) | Select -First 1;
+        }
+        $BuildInfo = @{
+            BuildEnvironment = "GitHub Action";
+            Branch = $ENV:CI_ACTION_REF_NAME;
+            BuildNumber = $ENV:GITHUB_RUN_NUMBER;
+            BuildUrl = "$ENV:GITHUB_SERVER_URL/$ENV:GITHUB_REPOSITORY/actions/runs/$ENV:GITHUB_RUN_ID";
+            VcsType = "Git";
+            VcsRoot = "$ENV:GITHUB_SERVER_URL/$ENV:GITHUB_REPOSITORY";
+            VcsCommitNumber = $ENV:GITHUB_SHA;
+            Commits = @($Commits)
+        }
+        $BuildInfo
+        New-Item -Name "buildInfo.json" -ItemType File -Value $($BuildInfo | ConvertTo-Json -Depth 10) -Force
+        octo build-information --package-id="${{ env.PACKAGE_NAME }}2" --version=${{ env.PACKAGE_VERSION }} --file="buildInfo.json" --server $ENV:OCTOPUS_URL --apiKey $ENV:OCTOPUS_API_KEY --overwrite-mode=OverwriteExisting
+        
 
 
 
