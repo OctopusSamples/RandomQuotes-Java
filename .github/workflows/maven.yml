@@ -131,7 +131,7 @@ jobs:
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
         OCTOPUS_URL: https://mattc.octopus.app
-        OCTOPUS_SPACE: Test
+        OCTOPUS_SPACE: Default
       with:
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
         overwrite_mode: OverwriteExisting
