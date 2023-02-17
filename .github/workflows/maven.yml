@@ -127,11 +127,11 @@ jobs:
         ls -la
       shell: bash
     - name: Push packages to Octopus Deploy
-      uses: OctopusDeploy/push-package-action@v3
+      uses: OctopusDeploy/push-package-action@fix/space-lookups
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
         OCTOPUS_URL: https://mattc.octopus.app
-        OCTOPUS_SPACE: Default
+        OCTOPUS_SPACE: Test
       with:
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
         overwrite_mode: OverwriteExisting
