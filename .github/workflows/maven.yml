@@ -118,20 +118,20 @@ jobs:
         # Octopus expects artifacts to have a specific file format
         file="${{ steps.get_artifact.outputs.artifact }}"
         extension="${file##*.}"
-        octofile="SampleMavenProject-SpringBoot.${{ steps.determine_version.outputs.semVer }}.${extension}"
+        octofile="RandomQuotes-Java.${{ steps.determine_version.outputs.semVer }}.${extension}"
         cp ${file} ${octofile}
         echo "::set-output name=artifact::${octofile}"
         # The version used when creating a release is the package id, colon, and version
-        octoversion="SampleMavenProject-SpringBoot:${{ steps.determine_version.outputs.semVer }}"
+        octoversion="RandomQuotes-Java:${{ steps.determine_version.outputs.semVer }}"
         echo "::set-output name=octoversion::${octoversion}"
         ls -la
       shell: bash
     - name: Push packages to Octopus Deploy
-      uses: OctopusDeploy/push-package-action@fix/space-lookups
+      uses: OctopusDeploy/push-package-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
-        OCTOPUS_URL: https://mattc.octopus.app
-        OCTOPUS_SPACE: Test
+        OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
+        OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
       with:
         packages: ${{ steps.get_octopus_artifact.outputs.artifact }}
         overwrite_mode: OverwriteExisting
@@ -143,16 +143,16 @@ jobs:
         OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
       with:
         version: ${{ steps.determine_version.outputs.semVer }}
-        packages: SampleMavenProject-SpringBoot
+        packages: RandomQuotes-Java
         overwrite_mode: OverwriteExisting
     - name: Create Octopus Release
       uses: OctopusDeploy/create-release-action@v3
       env:
         OCTOPUS_API_KEY: ${{ secrets.OCTOPUS_API_TOKEN }}
         OCTOPUS_URL: ${{ secrets.OCTOPUS_SERVER_URL }}
-        OCTOPUS_SPACE: Default
+        OCTOPUS_SPACE: ${{ secrets.OCTOPUS_SPACE }}
       with:
-        project: SampleMavenProject-SpringBoot
+        project: RandomQuotes-Java
         packages: ${{ steps.get_octopus_artifact.outputs.octoversion }}
 permissions:
   id-token: write
