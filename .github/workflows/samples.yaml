@@ -13,7 +13,7 @@
 #
 # Get a trial Octopus instance from https://octopus.com/start
 
-name: Java Maven Build
+name: Samples Java Maven Build
 'on':
   workflow_dispatch: {}
   push: {}
